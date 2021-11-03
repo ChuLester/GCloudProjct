@@ -30,7 +30,7 @@ def get_login_user():
     global FACE_COMPAROR_DICT
 
     if request.method == 'POST':
-        return {'result':list(FACE_COMPAROR_DICT.keys())}
+        return make_result_msg(True,None,list(FACE_COMPAROR_DICT.keys())
 
 @app.route('/company_register',methods = ['POST'])
 def company_register():
@@ -208,6 +208,7 @@ def _logout(values):
         return make_result_msg(False)
 
 
+
 @app.route('/clockin',methods = ['POST'])
 def clockin():
     """
@@ -253,6 +254,7 @@ def identify():
     """
     input:
         cropimage: user crop face image.
+        landmark: face landmark
 
     output:
         if recognize is suceess and face is match:
@@ -504,7 +506,6 @@ def get_user_profile():
                 'birthday' : user birthday.
                 'manager' : Is user has manage auth?
                 'face' : when Identify accept ,print user face image.
-                'landmarks' : five face landmark.
                 'user' : user name
             error_msg:
                 None
@@ -598,8 +599,9 @@ def _edit_user_profile(values):
             encode_image = values['cropimage'].encode()
             image_id = fs.put(encode_image)
             user.update_image(image_id)
-
-            face_embedding = extract_face(encode_image)
+            
+            landmarks = values['landmarks']
+            face_embedding = extract_face(encode_image,landmarks)
             eigenvalue = eigenvalue_to_dict(user_id,face_embedding,image_id)
             insert_eigenvalue = DB_CONNECTOR.insert_data(this_account_collection['eigenvalue'],eigenvalue).inserted_id
     else:
@@ -613,6 +615,8 @@ def cal_working_hours():
     """
     input:
         account : company account's name
+        starttime: set search start date.
+        endtime: set search end date.
     output:
         status:
             True
