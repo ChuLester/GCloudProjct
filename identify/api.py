@@ -5,7 +5,7 @@ from flask import request,Blueprint
 from bson.objectid import ObjectId
 from utils import make_result_msg,extract_face,get_account_collection
 from model import DB_CONNECTOR,FACE_COMPAROR_DICT
-from face_comparor import Face_Comparor
+from face_process.face_comparor import Face_Comparor
 from schema import request_to_dict,Clockin,eigenvalue_to_dict,Record,collection_schema_dict
 from config import RecognizeConfig
 

@@ -7,7 +7,6 @@ def cosine_distance(v1,v2):
     v2 = v2.reshape(-1,256)
     n1 = v1.shape[0]
     n2 = v2.shape[0]
-    dot = v1.dot(v2.T)
     norm1 = np.linalg.norm(v1,axis = 1).reshape(n1,1)
     norm2 = np.linalg.norm(v2,axis = 1).reshape(n2,1)
     similiry = v1.dot(v2.T) / norm1.dot(norm2.T)

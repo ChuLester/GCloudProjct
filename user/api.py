@@ -4,7 +4,7 @@ from flask import request,Blueprint
 from utils import get_account_collection,make_result_msg,extract_face
 from model import DB_CONNECTOR,FACE_COMPAROR_DICT
 from schema import User,request_to_dict,eigenvalue_to_dict,collection_schema_dict
-from face_comparor import Face_Comparor
+from face_process.face_comparor import Face_Comparor
 user_app = Blueprint('user', __name__)
 
 @user_app.route('/user_reigster',methods = ['POST'])

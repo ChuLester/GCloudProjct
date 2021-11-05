@@ -5,7 +5,7 @@ from tensorflow_serving.apis import predict_pb2
 from tensorflow_serving.apis import prediction_service_pb2_grpc
 import tensorflow_serving
 import numpy as np
-from face_aligment import FaceAligment
+from face_process.face_aligment import FaceAligment
 
 
 class InferenceClient:

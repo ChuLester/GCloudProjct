@@ -70,8 +70,8 @@ def cal_work_hours(clockin_dict):
             Clock_On = False
     return total_hours // 3600     
 
-@record_app.route('/user_record',methods = ['POST'])
-def user_record():
+@record_app.route('/get_user_record',methods = ['POST'])
+def get_user_record():
     """
     input:
         account : company account's name
@@ -97,12 +97,12 @@ def user_record():
     """
     logging.info('Call user_record.')
     if request.method == 'POST':
-        result_string = _user_record(request.get_json())
+        result_string = _get_user_record(request.get_json())
         return result_string
     else:
         return make_result_msg(False,error_msg='REQUEST FAILED')
 
-def _user_record(values):
+def _get_user_record(values):
 
     account = values['account']
     this_account_collection = get_account_collection(account)

@@ -1,7 +1,7 @@
 import logging
 from flask import Blueprint,request
 from model import DB_CONNECTOR
-from face_comparor import Face_Comparor
+from face_process.face_comparor import Face_Comparor
 from utils import make_result_msg,check_account_exist,get_account_collection
 from schema import Account,request_to_dict,collection_schema_dict
 
