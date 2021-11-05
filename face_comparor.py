@@ -13,7 +13,7 @@ def cosine_distance(v1,v2):
     similiry = v1.dot(v2.T) / norm1.dot(norm2.T)
     return 1 - similiry
 
-class FaceComparor:
+class Face_Comparor:
     def __init__(self,eigenvalue_object_list):
         self.eigenvalue_data_list = []
         self.user_data_list = []

