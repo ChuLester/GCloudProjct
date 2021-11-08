@@ -16,7 +16,7 @@ class Account:
         self.max_len = 12
         self.min_len = 6
 
-    def registe_check(self,all_account_list):
+    def register_check(self,all_account_list):
         checker = True
         error_text = ''
 
