@@ -33,6 +33,7 @@ def company_register():
         return make_result_msg(False,error_msg='REQUEST FAILED')
 
 def _company_register(values):
+    print(values)
     account_dict = request_to_dict(values,collection_schema_dict['account'])
     account = Account(account_dict)
 

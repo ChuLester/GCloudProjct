@@ -4,7 +4,8 @@ import cv2
 import json
 import numpy as np
 import time
-from model import INFERENCE_CLIENT,DB_CONNECTOR
+from model import INFERENCE_CLIENT,DB_CONNECTOR,FACE_COMPAROR_DICT
+from face_process.face_comparor import Face_Comparor
 
 def decode_image(base64_buffer):
     raw_image = bytes(base64_buffer[1:])
@@ -46,3 +47,9 @@ def make_result_msg(status,error_msg = None,result = None):
     out['error_msg'] = error_msg
     out['result'] = result
     return json.dumps(out)
+
+def reload_feature(account):
+    this_account_collection = get_account_collection(account)
+    account_all_eigenvalue = DB_CONNECTOR.query_data(this_account_collection['eigenvalue'],{'userid':{'$ne':None}},{'value':1,'userid':1})
+    FACE_COMPAROR_DICT[account] = Face_Comparor(account_all_eigenvalue) 
+

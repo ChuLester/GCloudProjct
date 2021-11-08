@@ -1,7 +1,7 @@
 import logging
 import gridfs
 from flask import request,Blueprint
-from utils import get_account_collection,make_result_msg,extract_face
+from utils import get_account_collection,make_result_msg,extract_face,reload_feature
 from model import DB_CONNECTOR,FACE_COMPAROR_DICT
 from schema import User,request_to_dict,eigenvalue_to_dict,collection_schema_dict
 from face_process.face_comparor import Face_Comparor
@@ -189,9 +189,3 @@ def _edit_user_profile(values):
 
     DB_CONNECTOR.update_data(this_account_collection['user'],{'_id':user_id},user.data)
     return make_result_msg(True)
-
-
-def reload_feature(account):
-    this_account_collection = get_account_collection(account)
-    account_all_eigenvalue = DB_CONNECTOR.query_data(this_account_collection['eigenvalue'],{'userid':{'$ne':None}},{'value':1,'userid':1})
-    FACE_COMPAROR_DICT[account] = Face_Comparor(account_all_eigenvalue) 
