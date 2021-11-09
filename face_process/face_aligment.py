@@ -15,6 +15,14 @@ class FaceAligment:
         self.landmark_location_list[2][1] = s60 * (self.landmark_location_list[0][0] - self.landmark_location_list[1][0]) - c60 * (self.landmark_location_list[0][1] - self.landmark_location_list[1][1]) + self.landmark_location_list[1][1]
     
     def aligment(self,face,landmark):
+        """
+        input:
+            face: crop face
+            landmarks: [left_eye_x,left_eye_y,right_eye_x,right_eye_y]
+    
+        output:
+            after aligment face
+        """
         landmark = np.array(landmark).reshape(-1,2)
         landmark = landmark[:2]
         s60 = np.sin(60 * np.pi / 180)
