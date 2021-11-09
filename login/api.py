@@ -1,6 +1,6 @@
 import logging
 from flask import Blueprint,request
-from uitls import make_result_msg
+from utils import make_result_msg
 from login.model import _login,_logout,_get_login_user
 login_app = Blueprint('login', __name__)
 

@@ -5,7 +5,7 @@ import json
 import numpy as np
 import time
 from model import INFERENCE_CLIENT,DB_CONNECTOR,FACE_COMPAROR_DICT
-from face_process.face_comparor import Face_Comparor
+from core.face_process.face_comparor import Face_Comparor
 
 def decode_image(base64_buffer):
     raw_image = bytes(base64_buffer[1:])

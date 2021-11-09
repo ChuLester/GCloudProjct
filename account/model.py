@@ -1,6 +1,6 @@
 import logging
 from model import DB_CONNECTOR
-from face_process.face_comparor import Face_Comparor
+from core.face_process.face_comparor import Face_Comparor
 from utils import make_result_msg,check_account_exist,get_account_collection
 from schema import Account,request_to_dict,collection_schema_dict
 
