@@ -1,10 +1,11 @@
 import logging
-from flask import Blueprint,request
+from flask import Blueprint, request
 from utils import make_result_msg
-from login.model import _login,_logout,_get_login_user
+from login.model import _login, _logout, _get_login_user
 login_app = Blueprint('login', __name__)
 
-@login_app.route('/login',methods = ['POST'])
+
+@login_app.route('/login', methods=['POST'])
 def login():
     """
     input:
@@ -23,17 +24,18 @@ def login():
         result_string = _login(request.get_json())
         return result_string
     else:
-        return make_result_msg(False,error_msg='REQUEST FAILED')
+        return make_result_msg(False, error_msg='REQUEST FAILED')
 
 
-@login_app.route('/get_login_user',methods = ['POST'])
+@login_app.route('/get_login_user', methods=['POST'])
 def get_login_user():
     if request.method == 'POST':
         result_string = _get_login_user()
     else:
-        return make_result_msg(False,error_msg='REQUEST FAILED')
+        return make_result_msg(False, error_msg='REQUEST FAILED')
 
-@login_app.route('/logout',methods = ['POST'])
+
+@login_app.route('/logout', methods=['POST'])
 def logout():
     """
     input:
@@ -50,5 +52,4 @@ def logout():
         result_string = _logout(request.get_json())
         return result_string
     else:
-        return make_result_msg(False,error_msg='REQUEST FAILED')
-
+        return make_result_msg(False, error_msg='REQUEST FAILED')
