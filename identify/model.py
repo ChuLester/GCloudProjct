@@ -6,6 +6,7 @@ from model import DB_CONNECTOR, FACE_COMPAROR_DICT
 from core.face_process.face_comparor import Face_Comparor
 from schema import request_to_dict, Clockin, eigenvalue_to_dict, Record, collection_schema_dict
 from config import RecognizeConfig
+from error_code import error_code_dict
 
 
 def _clockin(values):
@@ -24,17 +25,17 @@ def _clockin(values):
             this_account_collection['clockin'], clockin.data)
         return make_result_msg(True)
     else:
-        return make_result_msg(False)
+        return make_result_msg(False, error_code_dict[642])
 
 
 def _identify(values):
     account, identify_info = request_to_dict(
         values, collection_schema_dict['identify'], is_include_account=True)
     if account not in FACE_COMPAROR_DICT:
-        return make_result_msg(False, 'account not login')
+        return make_result_msg(False, error_code_dict[621])
 
     if len(FACE_COMPAROR_DICT[account].eigenvalue_data_list) == 0:
-        return make_result_msg(False, 'No data can reognition', None)
+        return make_result_msg(False, error_code_dict[641], None)
 
     this_account_collection = get_account_collection(account)
 
@@ -76,7 +77,7 @@ def _identify(values):
         return make_result_msg(True, error_msg=None, result=out_dict)
     else:
 
-        return make_result_msg(False, error_msg='Cannot recognized.')
+        return make_result_msg(False, error_msg=error_code_dict[640])
 
 
 def _update_face_feature(values):
@@ -89,9 +90,12 @@ def _update_face_feature(values):
     if the_same_docs:
         the_same_docs = DB_CONNECTOR.query_data(
             'accounts', {}, {'account': account})
+
         account_all_eigenvalue = DB_CONNECTOR.query_data(
             this_account_collection['eigenvalue'], {}, {'value': 1, 'userid': 1})
+
         FACE_COMPAROR_DICT[account] = Face_Comparor(account_all_eigenvalue)
+        logging.info('account %s update face feature' % (account))
         return make_result_msg(True)
     else:
-        return make_result_msg(False, error_msg='Account is invalid.')
+        return make_result_msg(False, error_msg=error_code_dict[611])

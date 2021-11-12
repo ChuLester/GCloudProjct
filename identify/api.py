@@ -1,10 +1,11 @@
 import logging
-from flask import request,Blueprint
+from flask import request, Blueprint
 from utils import make_result_msg
-from identify.model import _clockin,_identify,_update_face_feature
+from identify.model import _clockin, _identify, _update_face_feature
 identify_app = Blueprint('identify', __name__)
 
-@identify_app.route('/clockin',methods = ['POST'])
+
+@identify_app.route('/clockin', methods=['POST'])
 def clockin():
     """
     input:
@@ -19,15 +20,16 @@ def clockin():
                 status : False
             else:
                 ststus : True
-    """    
+    """
     logging.info('Call clockin')
     if request.method == 'POST':
         result_string = _clockin(request.get_json())
         return result_string
     else:
-        return make_result_msg(False,error_msg='REQUEST FAILED')
+        return make_result_msg(False, error_msg=error_code_dict[600])
 
-@identify_app.route('/identify',methods = ['POST'])
+
+@identify_app.route('/identify', methods=['POST'])
 def identify():
     """
     input:
@@ -53,23 +55,22 @@ def identify():
                 if face is not match: : Cannot recognized.
                 if account dose not login : account not login
                 if account no avaliable data : No data can reognition.
-    """  
-    
+    """
+
     logging.info('Call identify')
     if request.method == 'POST':
         result_string = _identify(request.get_json())
         return result_string
     else:
-        return make_result_msg(False,error_msg='REQUEST FAILED')
+        return make_result_msg(False, error_msg=error_code_dict[600])
 
 
-
-@identify_app.route('/update_face_feature',methods = ['POST'])
+@identify_app.route('/update_face_feature', methods=['POST'])
 def update_face_feature():
     """
     input:
         account : company account's name.
-    
+
     output:
         if update face feature success:
             status : 
@@ -92,5 +93,4 @@ def update_face_feature():
         result_string = _update_face_feature(request.get_json())
         return result_string
     else:
-        return make_result_msg(False,error_msg='REQUEST FAILED')
-
+        return make_result_msg(False, error_msg=error_code_dict[600])

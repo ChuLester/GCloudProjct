@@ -7,15 +7,16 @@ from record.api import record_app
 from user.api import user_app
 
 app = Flask(__name__)
-app.register_blueprint(account_app, url_prefix = '/account')
-app.register_blueprint(identify_app, url_prefix = '/identify')
-app.register_blueprint(login_app, url_prefix = '/login')
-app.register_blueprint(record_app, url_prefix = '/record')
-app.register_blueprint(user_app, url_prefix = '/user')
+app.register_blueprint(account_app, url_prefix='/account')
+app.register_blueprint(identify_app, url_prefix='/identify')
+app.register_blueprint(login_app, url_prefix='/login')
+app.register_blueprint(record_app, url_prefix='/record')
+app.register_blueprint(user_app, url_prefix='/user')
 
 
 if __name__ == '__main__':
     # app.debug = True
-    logging.basicConfig(filename='run.log',level=logging.DEBUG)
-    app.run(host='0.0.0.0',port=8080, debug = True)
-
+    logging.basicConfig(filename='run.log', level=logging.DEBUG)
+    # app.run(host='0.0.0.0', port=8080, debug=True)
+    app.run(host='0.0.0.0', port=8080, debug=True, ssl_context=(
+        '../license/cert.pem', '../license/key.pem'))

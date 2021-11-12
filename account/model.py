@@ -3,6 +3,7 @@ from model import DB_CONNECTOR
 from core.face_process.face_comparor import Face_Comparor
 from utils import make_result_msg, check_account_exist, get_account_collection
 from schema import Account, request_to_dict, collection_schema_dict
+from werkzeug.security import generate_password_hash
 
 
 def _company_register(values):
@@ -12,15 +13,23 @@ def _company_register(values):
     the_same_docs = DB_CONNECTOR.query_data(
         'accounts', {'account': account.data['account']}, {'account': 1})
 
+    account.data['password'] = generate_password_hash(account.data['password'])
+
     if the_same_docs is None:
+
         account_id = DB_CONNECTOR.insert_data('accounts', account.data)
         account_name = account.data['account']
+
+        logging.info('Create Accont : %s , InsertID : %s' %
+                     (account_name, str(account_id)))
+
         DB_CONNECTOR.create_collection('user_%s' % (account_name))
         DB_CONNECTOR.create_collection('eigenvalue_%s' % (account_name))
         DB_CONNECTOR.create_collection('record_%s' % (account_name))
         DB_CONNECTOR.create_collection('image_%s.files' % (account_name))
         DB_CONNECTOR.create_collection('image_%s.chunks' % (account_name))
         DB_CONNECTOR.create_collection('clockin_%s' % (account_name))
+
         return make_result_msg(True)
     else:
         logging.warning('front-end POST the same account in DB.')
@@ -32,8 +41,9 @@ def _remove_company_account(values):
     this_account_collection = get_account_collection(account)
     if check_account_exist(account):
         DB_CONNECTOR.delete_data('accounts', {'account': account})
+        logging.info('remove %s account' % (account))
         for collection_type in this_account_collection.keys():
-            print('kill ', this_account_collection[collection_type])
+            # print('kill ', this_account_collection[collection_type])
             DB_CONNECTOR.drop_collection(
                 this_account_collection[collection_type])
 
