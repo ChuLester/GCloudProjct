@@ -29,8 +29,11 @@ def _cal_working_hours(values):
     for user_clockin_doc in result_data:
         user_name = user_clockin_doc['user'][0]['name']
         user_wage = user_clockin_doc['user'][0]['wage']
-        work_hours = cal_work_hours(user_clockin_doc['result_list'])
-        user_hour_dict[user_name] = {'hours': work_hours, 'wage': user_wage}
+        detail_clockon_list, work_hours = cal_work_hours(
+            user_clockin_doc['result_list'])
+
+        user_hour_dict[user_name] = {
+            'detail': detail_clockon_list, 'hours': work_hours, 'wage': user_wage}
 
     return make_result_msg(True, None, user_hour_dict)
 
@@ -39,6 +42,7 @@ def cal_work_hours(clockin_dict):
     Clock_On = None
     ClockOn_time = 0
     total_hours = 0
+    detail_clockon_list = []
     for doc in clockin_dict:
         status = doc['status']
         date = doc['date']
@@ -48,9 +52,12 @@ def cal_work_hours(clockin_dict):
         elif status == "OFF" and Clock_On:
             end_time = date
             start_time = ClockOn_time
-            total_hours = ((end_time - start_time).seconds) + total_hours
+            day_hours = ((end_time - start_time).seconds) // (60 * 30)
+            detail_clockon_list.append([start_time, end_time, day_hours])
+            total_hours = day_hours + total_hours
             Clock_On = False
-    return total_hours // 3600
+
+    return detail_clockon_list, total_hours
 
 
 def _get_user_record(values):
