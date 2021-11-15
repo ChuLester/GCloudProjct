@@ -35,6 +35,8 @@ def get_user_record():
     """
     input:
         account : company account's name
+        starttime: set search start date.
+        endtime: set search end date.
     output:
         if success:
             status : 

@@ -62,10 +62,20 @@ def cal_work_hours(clockin_dict):
 
 def _get_user_record(values):
 
-    account = values['account']
+    account, workhour_dict = request_to_dict(
+        values, collection_schema_dict['workhour'], is_include_account=True)
     this_account_collection = get_account_collection(account)
 
+    if 'starttime' in workhour_dict.keys() and 'endtime' in workhour_dict.keys():
+        starttime = datetime.strptime(workhour_dict['starttime'], "%Y/%m/%d")
+        endtime = datetime.strptime(workhour_dict['endtime'], "%Y/%m/%d")
+    else:
+        endtime = datetime.today()
+        starttime = endtime - datetime.timedelta(days=30)
+
     expression_list = []
+    expression_list.append(
+        {"$match": {"date": {"$gte": starttime, "$lt": endtime}}})
     expression_list.append({"$lookup": {
                            "from": this_account_collection['user'], "localField": "userid", "foreignField": "_id", "as": "user"}})
     expression_list.append({"$lookup": {
