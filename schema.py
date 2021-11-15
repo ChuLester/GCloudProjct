@@ -1,5 +1,6 @@
 from bson.objectid import ObjectId
 from error_code import error_code_dict
+from config import PayConfig
 
 
 def request_to_dict(values, collection_schema, is_include_account=False):
@@ -65,6 +66,9 @@ class User:
         if not(isValid):
             return [isValid, error_msg]
 
+        if 'wage' not in self.data.keys():
+            self.data['wage'] = PayConfig['wage']
+
         return [True, 'SUCCESS']
 
     def check_is_not_exist(self, all_user_list):
@@ -72,8 +76,8 @@ class User:
             return [True, '']
         if self.data['name'] in all_user_list:
             return [False, error_code_dict[630]]
-        else:
-            return [True, '']
+
+        return [True, '']
 
     def update_image(self, imageid):
         self.data['cropimageid'] = imageid
@@ -113,7 +117,7 @@ collection_schema_dict = {}
 collection_schema_dict['account'] = ['_id', 'account',
                                      'password', 'mail', 'workspace', 'third_party']
 collection_schema_dict['user'] = ['_id', 'name',
-                                  'phone', 'mail', 'sex', 'birthday', 'manager', 'face']
+                                  'phone', 'mail', 'sex', 'birthday', 'manager', 'face', 'wage']
 collection_schema_dict['eigenvalue'] = [
     '_id', 'userid', 'value', 'cropimageID']
 collection_schema_dict['record'] = ['_id', 'cropimageID', 'eigenvalue']
