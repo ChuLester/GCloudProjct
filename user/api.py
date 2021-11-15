@@ -3,7 +3,7 @@ import gridfs
 from flask import request, Blueprint
 from utils import make_result_msg
 from user.model import _user_register, _edit_user_profile, _get_user_profile
-
+from error_code import error_code_dict
 user_app = Blueprint('user', __name__)
 
 
