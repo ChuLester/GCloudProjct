@@ -19,6 +19,7 @@ def user_reigster():
             'face' : when Identify accept ,print user face image.
             'landmarks' : five face landmark.
             'user' : user name
+            'wage' : user salary for hour
 
         output:
             result_string:
@@ -52,6 +53,7 @@ def get_user_profile():
                 'manager' : Is user has manage auth?
                 'face' : when Identify accept ,print user face image.
                 'user' : user name
+                'wage' : user salary for hour
             error_msg:
                 None
         else:
@@ -83,6 +85,7 @@ def edit_user_profile():
         face : when Identify accept ,print user face image.
         landmarks : five face landmark.
         user : user name
+        wage : user salary for hour
     output:
         if success:
             status : 
