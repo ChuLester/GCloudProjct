@@ -4,6 +4,7 @@ from utils import get_account_collection, make_result_msg, extract_face, reload_
 from model import DB_CONNECTOR, FACE_COMPAROR_DICT
 from schema import User, request_to_dict, eigenvalue_to_dict, collection_schema_dict
 from core.face_process.face_comparor import Face_Comparor
+from error_code import error_code_dict
 
 
 def _get_user_profile(values):
@@ -11,14 +12,19 @@ def _get_user_profile(values):
     account = values['account']
 
     this_account_collection = get_account_collection(account)
-    fs = gridfs.GridFS(DB_CONNECTOR.db, this_account_collection['image'])
+    fs = gridfs.GridFS(DB_CONNECTOR.db, 'image')
 
-    result_data = DB_CONNECTOR.query_data(
-        this_account_collection['user'], {}, {'_id': 0})
+    the_same_docs = DB_CONNECTOR.query_data(
+        'profile', {'account': account}, {'users': 1})
 
+    if not(the_same_docs):
+        logging.warning('Account was not register.')
+        return make_result_msg(False, error_msg=error_code_dict[611])
+
+    result_data = the_same_docs[0]
     user_list = []
-    for doc in result_data:
-        user = doc
+    for user_name in result_data.keys():
+        user = result_data[user_name]
         user['cropimageid'] = str(fs.get(user['cropimageid']).read())[1:]
         user_list.append(user)
 
@@ -31,76 +37,79 @@ def _edit_user_profile(values):
         values, collection_schema_dict['user'], is_include_account=True)
     user = User(user_dict)
     the_same_docs = DB_CONNECTOR.query_data(
-        'accounts', {'account': account}, {'account': 1})
+        'profile', {'account': account}, {'account': 1})
 
     if not(the_same_docs):
         logging.warning('Account was not register.')
-        return make_result_msg(False, error_msg='Account was not register.')
+        return make_result_msg(False, error_msg=error_code_dict[611])
 
-    this_account_collection = get_account_collection(account)
-    the_same_user_docs = DB_CONNECTOR.query_data(this_account_collection['user'], {
-                                                 'name': user_dict['name']}, {})
+    account_profile = the_same_docs[0]
+    account_profile_users = account_profile['users']
 
-    if the_same_user_docs:
-        user_id = the_same_user_docs[0]['_id']
+    if user.data['name'] in account_profile_users.keys():
+
         if 'cropimage' in values.keys():
             fs = gridfs.GridFS(
-                DB_CONNECTOR.db, this_account_collection['image'])
+                DB_CONNECTOR.db, 'image')
             encode_image = values['cropimage'].encode()
             image_id = fs.put(encode_image)
             user.update_image(image_id)
 
             landmarks = values['landmarks']
             face_embedding = extract_face(encode_image, landmarks)
-            eigenvalue = eigenvalue_to_dict(user_id, face_embedding, image_id)
-            insert_eigenvalue = DB_CONNECTOR.insert_data(
-                this_account_collection['eigenvalue'], eigenvalue).inserted_id
-    else:
-        return make_result_msg(False, 'No match user.')
 
-    DB_CONNECTOR.update_data(this_account_collection['user'], {
-                             '_id': user_id}, user.data)
+            eigenvalue = eigenvalue_to_dict(
+                user.data['name'], face_embedding, image_id, account)
+
+            insert_eigenvalue = DB_CONNECTOR.insert_data(
+                'eigenvalue', eigenvalue).inserted_id
+    else:
+        return make_result_msg(False, error_code_dict[631])
+
+    account_profile_users[user.data['name']] = user.data
+    DB_CONNECTOR.update_data('profile', {
+        'account': account}, {'users': account_profile_users})
+
     return make_result_msg(True)
 
 
 def _user_register(values):
     account, user_dict = request_to_dict(
         values, collection_schema_dict['user'], is_include_account=True)
+
     user = User(user_dict)
     the_same_docs = DB_CONNECTOR.query_data(
-        'accounts', {'account': account}, {'account': 1})
+        'profile', {'account': account}, {'account': 1})
+
     if not(the_same_docs):
         logging.warning('Account was not register.')
-        return make_result_msg(False, error_msg='Account was not register.')
-    this_account_collection = get_account_collection(account)
+        return make_result_msg(False, error_msg=error_code_dict[611])
 
-    all_user_docs = DB_CONNECTOR.query_data(
-        this_account_collection['user'], {}, {'name': 1})
+    account_profile = the_same_docs[0]
+    account_proflie_users = account_profile['users']
 
-    if all_user_docs:
-        all_user_list = [doc['name'] for doc in all_user_docs]
-    else:
-        all_user_list = []
-    # print(all_user_list)
-    isValid, error_text = user.check(all_user_list)
+    isValid, error_text = user.check(account_proflie_users.keys())
     if not(isValid):
         logging.warning(
             'front-end POST the same user in the account collection.')
         return make_result_msg(False, error_msg=error_text)
 
-    fs = gridfs.GridFS(DB_CONNECTOR.db, this_account_collection['image'])
+    fs = gridfs.GridFS(DB_CONNECTOR.db, 'image')
     encode_image = values['cropimage'].encode()
     image_id = fs.put(encode_image)
     user.update_image(image_id)
 
-    user_insert_id = DB_CONNECTOR.insert_data(
-        this_account_collection['user'], user.data).inserted_id
+    account_proflie_users[user.data['name']] = user.data
+    DB_CONNECTOR.update_data('profile', {'account': account}, {
+                             'users': account_proflie_users})
 
     landmarks = values['landmarks']
     face_embedding = extract_face(encode_image, landmarks)
-    eigenvalue = eigenvalue_to_dict(user_insert_id, face_embedding, image_id)
+    eigenvalue = eigenvalue_to_dict(
+        user.data['name'], face_embedding, image_id, account)
+
     # print(eigenvalue)
     insert_eigenvalue = DB_CONNECTOR.insert_data(
-        this_account_collection['eigenvalue'], eigenvalue).inserted_id
+        'eigenvalue', eigenvalue).inserted_id
     reload_feature(account)
     return make_result_msg(True)
