@@ -56,7 +56,12 @@ def make_result_msg(status, error_msg=None, result=None):
 
 
 def reload_feature(account):
-    this_account_collection = get_account_collection(account)
-    account_all_eigenvalue = DB_CONNECTOR.query_data(this_account_collection['eigenvalue'], {
-                                                     'userid': {'$ne': None}}, {'value': 1, 'userid': 1})
+    account_profile = DB_CONNECTOR.query_data(
+        'profile', {'account': account}, {'users': 1})
+
+    account_profile_users_list = list(account_profile[0]['users'].keys())
+
+    account_all_eigenvalue = DB_CONNECTOR.query_data('eigenvalue', {'account': account, 'userid': {
+                                                     '$in': account_profile_users_list}}, {'value': 1, 'userid': 1})
+
     FACE_COMPAROR_DICT[account] = Face_Comparor(account_all_eigenvalue)
