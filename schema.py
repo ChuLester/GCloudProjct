@@ -105,11 +105,12 @@ class Record:
         self.data['eigenvalue'] = eigenvalue
 
 
-def eigenvalue_to_dict(userid, value, imageid):
+def eigenvalue_to_dict(userid, value, imageid, account):
     out_dict = {}
     out_dict['userid'] = userid
     out_dict['value'] = value
     out_dict['cropimageID'] = imageid
+    out_dict['account'] = account
     return out_dict
 
 
