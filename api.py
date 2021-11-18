@@ -12,12 +12,12 @@ app.register_blueprint(identify_app, url_prefix='/identify')
 app.register_blueprint(login_app, url_prefix='/login')
 app.register_blueprint(record_app, url_prefix='/record')
 app.register_blueprint(user_app, url_prefix='/user')
+logging.basicConfig(filename='run.log', level=logging.DEBUG,
+                    format='%(asctime)s - %(levelname)s : %(message)s')
 
+# if __name__ == '__main__':
+# app.debug = True
 
-if __name__ == '__main__':
-    # app.debug = True
-    logging.basicConfig(filename='run.log', level=logging.DEBUG,
-                        format='%(asctime)s - %(levelname)s : %(message)s')
-    # app.run(host='0.0.0.0', port=8080, debug=True)
-    app.run(host='0.0.0.0', port=8080, debug=True, ssl_context=(
-        '../license/cert.pem', '../license/key.pem'))
+# app.run(host='0.0.0.0', port=8083, debug=True)
+# app.run(host='0.0.0.0', port=8080, debug=True, ssl_context=(
+#     '../license/cert.pem', '../license/key.pem'))

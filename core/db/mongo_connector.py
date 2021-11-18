@@ -7,7 +7,8 @@ import time
 
 class Connector:
     def __init__(self, db_connect_config):
-        self.client = pymongo.MongoClient(db_connect_config['host'])
+        self.client = pymongo.MongoClient(
+            db_connect_config['host'], connect=False)
         self.db = self.client[db_connect_config['cloud_face_db']]
         self.fs = None
 
