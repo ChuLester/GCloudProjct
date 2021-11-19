@@ -99,9 +99,8 @@ class Clockin:
 
 
 class Record:
-    def __init__(self, imageid, eigenvalue):
+    def __init__(self, eigenvalue):
         self.data = {}
-        self.data['cropimageID'] = imageid
         self.data['eigenvalue'] = eigenvalue
 
 
@@ -123,7 +122,7 @@ collection_schema_dict['eigenvalue'] = [
     '_id', 'userid', 'value', 'cropimageID']
 collection_schema_dict['record'] = ['_id', 'cropimageID', 'eigenvalue']
 collection_schema_dict['clockin'] = [
-    '_id', 'userid', 'date', 'recordID', 'status']
+    'account', 'userid', 'date', 'recordID', 'status']
 collection_schema_dict['image'] = ['_id', 'file']
 collection_schema_dict['login'] = ['account', 'password']
 collection_schema_dict['logout'] = ['account']
