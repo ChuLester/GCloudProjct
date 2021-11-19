@@ -29,7 +29,7 @@ def _company_register(values):
 
 def _remove_company_account(values):
     account = values['account']
-    this_account_collection = get_account_collection(account)
+
     if check_account_exist(account):
         DB_CONNECTOR.delete_data('profile', {'account': account})
         DB_CONNECTOR.delete_data('eigenvalue', {'account': account})
