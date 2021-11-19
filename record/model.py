@@ -9,10 +9,17 @@ def _cal_working_hours(values):
 
     account, workhour_dict = request_to_dict(
         values, collection_schema_dict['workhour'], is_include_account=True)
-    this_account_collection = get_account_collection(account)
+
+    result_user_data = DB_CONNECTOR.query_data(
+        'record', {"account": account}, {"users": 1})
+
+    result_user_data = result_user_data[0]["users"]
+
     starttime = datetime.strptime(workhour_dict['starttime'], "%Y/%m/%d")
     endtime = datetime.strptime(workhour_dict['endtime'], "%Y/%m/%d")
     expression_list = []
+    expression_list.append(
+        {"$match": {"account": account, "user_id": {"$exists": True}, "status": {"$exists": True}}})
     expression_list.append({"$project": {"status": "$status", "_id": "$_id",
                            "userid": "$userid", "date": {"$dateFromString": {"dateString": "$date"}}}})
     expression_list.append(
@@ -20,15 +27,13 @@ def _cal_working_hours(values):
     expression_list.append({"$group": {"_id": "$userid", "result_list": {
                            "$push": {"status": "$status", "date": "$date"}}}})
     expression_list.append({"$sort": {"result_list.date": 1}})
-    expression_list.append({"$lookup": {
-                           "from": this_account_collection['user'], "localField": "_id", "foreignField": "_id", "as": "user"}})
-    result_data = DB_CONNECTOR.aggregate(
-        this_account_collection['clockin'], expression_list)
+
+    result_record_data = DB_CONNECTOR.aggregate('record', expression_list)
 
     user_hour_dict = {}
-    for user_clockin_doc in result_data:
-        user_name = user_clockin_doc['user'][0]['name']
-        user_wage = user_clockin_doc['user'][0]['wage']
+    for user_clockin_doc in result_record_data:
+        user_name = user_clockin_doc['userid']
+        user_wage = result_user_data[user_name]['wage']
         detail_clockon_list, work_hours = cal_work_hours(
             user_clockin_doc['result_list'])
 
@@ -64,7 +69,6 @@ def _get_user_record(values):
 
     account, workhour_dict = request_to_dict(
         values, collection_schema_dict['workhour'], is_include_account=True)
-    this_account_collection = get_account_collection(account)
 
     if 'starttime' in workhour_dict.keys() and 'endtime' in workhour_dict.keys():
         starttime = datetime.strptime(workhour_dict['starttime'], "%Y/%m/%d")
@@ -73,27 +77,27 @@ def _get_user_record(values):
         endtime = datetime.today()
         starttime = endtime - datetime.timedelta(days=30)
 
-    expression_list = []
-    expression_list.append(
-        {"$match": {"date": {"$gte": starttime, "$lt": endtime}}})
-    expression_list.append({"$lookup": {
-                           "from": this_account_collection['user'], "localField": "userid", "foreignField": "_id", "as": "user"}})
-    expression_list.append({"$lookup": {
-                           "from": this_account_collection['record'], "localField": "recordID", "foreignField": "_id", "as": "image"}})
-    expression_list.append({"$project": {
-                           "date": 1, "status": 1, "user.name": 1, "image.cropimageID": 1}})
-    result_data = DB_CONNECTOR.aggregate(
-        this_account_collection['clockin'], expression_list)
+    result_user_data = DB_CONNECTOR.query_data(
+        'profile', {"account": account}, {"users": 1})
 
-    fs = gridfs.GridFS(DB_CONNECTOR.db, this_account_collection['image'])
+    result_user_data = result_user_data[0]["users"]
+
+    result_record_data = DB_CONNECTOR.query_data('record', {'account': account, "date": {
+        "$gte": starttime, "$lt": endtime}, "status": {"$exists": True}, "username": {"$exists": True}}, {'_id': 0})
+
+    fs = gridfs.GridFS(DB_CONNECTOR.db, 'image')
 
     output = []
-    for doc in result_data:
-        del doc['_id']
-        doc['user'] = doc['user'][0]['name']
-        raw_image = fs.get(doc['image'][0]['cropimageID']).read()
+    for doc in result_record_data:
+        raw_image = fs.get(
+            result_user_data[doc['username']]['cropimageID']).read()
         raw_image = str(raw_image)[1:]
-        doc['image'] = raw_image
-        output.append(doc)
+        out_record = {
+            'user': doc['username'],
+            'date': doc['date'],
+            'status': doc['status'],
+            'image': raw_image
+        }
+        output.append(out_record)
 
     return make_result_msg(True, result=output)
