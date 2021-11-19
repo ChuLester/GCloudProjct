@@ -31,6 +31,7 @@ def _clockin(values):
 
 
 def _identify(values):
+    logging.info("Call identify")
     account, identify_info = request_to_dict(
         values, collection_schema_dict['identify'], is_include_account=True)
 
