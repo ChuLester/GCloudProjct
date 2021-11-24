@@ -16,17 +16,17 @@ def _login(values):
     password = login_info['password']
 
     the_same_docs = DB_CONNECTOR.query_data(
-        'accounts', {'account': account}, {'_id': 0})
+        'profile', {'account': account}, {'_id': 0})
 
     if the_same_docs:
-        if check_password_hash(the_same_docs.__getitem__(0)['password'], password):
+        if check_password_hash(the_same_docs[0]['password'], password):
             reload_feature(login_info['account'])
             logging.info('%s login' % (login_info['account']))
             return make_result_msg(True)
         else:
             return make_result_msg(False, error_code_dict[620])
     else:
-        return make_result_msg(False, error_code_dict[620])
+        return make_result_msg(False, error_code_dict[611])
 
 
 def _logout(values):
