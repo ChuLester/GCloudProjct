@@ -15,9 +15,7 @@ app.register_blueprint(user_app, url_prefix='/user')
 logging.basicConfig(filename='run.log', level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s : %(message)s')
 
-# if __name__ == '__main__':
-# app.debug = True
-
-# app.run(host='0.0.0.0', port=8083, debug=True)
-# app.run(host='0.0.0.0', port=8080, debug=True, ssl_context=(
-#     '../license/cert.pem', '../license/key.pem'))
+if __name__ == '__main__':
+    # app.run(host='0.0.0.0', port=8085, debug=True)
+    app.run(host='0.0.0.0', port=8080, debug=True, ssl_context=(
+        '../license/cert.pem', '../license/key.pem'))
