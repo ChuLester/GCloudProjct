@@ -79,7 +79,8 @@ def _user_register(values):
 
     user = User(user_dict)
     the_same_docs = DB_CONNECTOR.query_data(
-        'profile', {'account': account}, {'account': 1})
+        'profile', {'account': account}, {'account': 1,
+                                          'users': 1})
 
     if not(the_same_docs):
         logging.warning('Account was not register.')
