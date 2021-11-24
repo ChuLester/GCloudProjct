@@ -1,6 +1,7 @@
 from bson.objectid import ObjectId
 from error_code import error_code_dict
 from config import PayConfig
+from datetime import datetime
 
 
 def request_to_dict(values, collection_schema, is_include_account=False):
@@ -94,14 +95,17 @@ class Clockin:
         self.objectid_construct()
 
     def objectid_construct(self):
-        self.data['userid'] = ObjectId(self.data['userid'])
+        self.data['userid'] = self.data['userid']
+        self.data['date'] = datetime.strptime(
+            self.data['date'], "%Y/%m/%d %H:%M:%S")
         self.data['recordID'] = ObjectId(self.data['recordID'])
 
 
 class Record:
-    def __init__(self, eigenvalue):
+    def __init__(self, eigenvalue, account):
         self.data = {}
         self.data['eigenvalue'] = eigenvalue
+        self.data['account'] = account
 
 
 def eigenvalue_to_dict(userid, value, imageid, account):
