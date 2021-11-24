@@ -2,7 +2,7 @@ import gridfs
 from utils import make_result_msg, get_account_collection
 from schema import request_to_dict, collection_schema_dict
 from model import DB_CONNECTOR
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 def _cal_working_hours(values):
@@ -11,19 +11,25 @@ def _cal_working_hours(values):
         values, collection_schema_dict['workhour'], is_include_account=True)
 
     result_user_data = DB_CONNECTOR.query_data(
-        'record', {"account": account}, {"users": 1})
+        'profile', {"account": account}, {"users": 1})
 
     result_user_data = result_user_data[0]["users"]
 
-    starttime = datetime.strptime(workhour_dict['starttime'], "%Y/%m/%d")
-    endtime = datetime.strptime(workhour_dict['endtime'], "%Y/%m/%d")
+    if 'starttime' in workhour_dict.keys() and 'endtime' in workhour_dict.keys():
+        starttime = datetime.strptime(workhour_dict['starttime'], "%Y/%m/%d")
+        endtime = datetime.strptime(
+            workhour_dict['endtime'], "%Y/%m/%d") + timedelta(days=1)
+    else:
+        endtime = datetime.today() + timedelta(days=1)
+        starttime = endtime - timedelta(days=30)
+
     expression_list = []
     expression_list.append(
-        {"$match": {"account": account, "user_id": {"$exists": True}, "status": {"$exists": True}}})
-    expression_list.append({"$project": {"status": "$status", "_id": "$_id",
-                           "userid": "$userid", "date": {"$dateFromString": {"dateString": "$date"}}}})
+        {"$match": {"account": account, "userid": {"$exists": True}, "status": {"$exists": True}}})
+    # expression_list.append({"$project": {"status": "$status", "_id": "$_id",
+    #                        "userid": "$userid", "date": {"$dateFromString": {"dateString": "$date"}}}})
     expression_list.append(
-        {"$match": {"date": {"$gte": starttime, "$lt": endtime}}})
+        {"$match": {"date": {"$gte": starttime, "$lte": endtime}}})
     expression_list.append({"$group": {"_id": "$userid", "result_list": {
                            "$push": {"status": "$status", "date": "$date"}}}})
     expression_list.append({"$sort": {"result_list.date": 1}})
@@ -32,7 +38,7 @@ def _cal_working_hours(values):
 
     user_hour_dict = {}
     for user_clockin_doc in result_record_data:
-        user_name = user_clockin_doc['userid']
+        user_name = user_clockin_doc['_id']
         user_wage = result_user_data[user_name]['wage']
         detail_clockon_list, work_hours = cal_work_hours(
             user_clockin_doc['result_list'])
@@ -58,7 +64,8 @@ def cal_work_hours(clockin_dict):
             end_time = date
             start_time = ClockOn_time
             day_hours = ((end_time - start_time).seconds) // (60 * 30)
-            detail_clockon_list.append([start_time, end_time, day_hours])
+            detail_clockon_list.append([start_time.strftime(
+                "%Y/%m/%d %H:%M:%S"), end_time.strftime("%Y/%m/%d %H:%M:%S"), day_hours])
             total_hours = day_hours + total_hours
             Clock_On = False
 
@@ -72,29 +79,34 @@ def _get_user_record(values):
 
     if 'starttime' in workhour_dict.keys() and 'endtime' in workhour_dict.keys():
         starttime = datetime.strptime(workhour_dict['starttime'], "%Y/%m/%d")
-        endtime = datetime.strptime(workhour_dict['endtime'], "%Y/%m/%d")
+        endtime = datetime.strptime(
+            workhour_dict['endtime'], "%Y/%m/%d") + timedelta(days=1)
     else:
-        endtime = datetime.today()
-        starttime = endtime - datetime.timedelta(days=30)
-
+        endtime = datetime.today() + timedelta(days=1)
+        starttime = endtime - timedelta(days=30)
+    print(endtime)
     result_user_data = DB_CONNECTOR.query_data(
         'profile', {"account": account}, {"users": 1})
 
     result_user_data = result_user_data[0]["users"]
-
+    print(result_user_data.keys())
     result_record_data = DB_CONNECTOR.query_data('record', {'account': account, "date": {
-        "$gte": starttime, "$lt": endtime}, "status": {"$exists": True}, "username": {"$exists": True}}, {'_id': 0})
+        "$gte": starttime, "$lt": endtime}, "status": {"$exists": True}, "userid": {"$exists": True}}, {'_id': 0})
 
     fs = gridfs.GridFS(DB_CONNECTOR.db, 'image')
 
+    if result_record_data is None:
+        return make_result_msg(True, None, None)
+
     output = []
+
     for doc in result_record_data:
         raw_image = fs.get(
-            result_user_data[doc['username']]['cropimageID']).read()
+            result_user_data[doc['userid']]['cropimageid']).read()
         raw_image = str(raw_image)[1:]
         out_record = {
-            'user': doc['username'],
-            'date': doc['date'],
+            'user': doc['userid'],
+            'date': doc['date'].strftime("%Y/%m/%d %H:%M:%S"),
             'status': doc['status'],
             'image': raw_image
         }

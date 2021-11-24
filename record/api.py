@@ -57,7 +57,7 @@ def get_user_record():
                 None
 
     """
-    logging.info('Call user_record.')
+    logging.info('Call get_user_record.')
     if request.method == 'POST':
         result_string = _get_user_record(request.get_json())
         return result_string
