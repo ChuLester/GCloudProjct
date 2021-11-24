@@ -2,6 +2,7 @@ import logging
 from flask import request, Blueprint
 from utils import make_result_msg
 from identify.model import _clockin, _identify, _update_face_feature
+from error_code import error_code_dict
 identify_app = Blueprint('identify', __name__)
 
 

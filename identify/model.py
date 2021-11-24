@@ -11,7 +11,8 @@ from error_code import error_code_dict
 
 def _clockin(values):
     account, clockin_info = request_to_dict(
-        values, 'record', is_include_account=True)
+        values, collection_schema_dict['clockin'], is_include_account=True)
+
     clockin = Clockin(clockin_info)
 
     if clockin_info['status'] in ['ON', 'OFF']:
@@ -23,7 +24,8 @@ def _clockin(values):
                                  '_id': eigenvalue_id}, {'userid': clockin.data['userid']})
 
         DB_CONNECTOR.update_data('record', {'_id': ObjectId(
-            clockin.data['recordID'])}, clockin)
+            clockin.data['recordID'])}, clockin.data)
+        print(clockin.data)
 
         return make_result_msg(True)
     else:
@@ -46,7 +48,7 @@ def _identify(values):
 
     landmarks = values['landmarks']
     face_embedding = extract_face(encode_image, landmarks)
-    eigenvalue = eigenvalue_to_dict(None, face_embedding, image_id)
+    eigenvalue = eigenvalue_to_dict(None, face_embedding, image_id, account)
     userid, cosine_distance = FACE_COMPAROR_DICT[account].identify(
         face_embedding)
 
@@ -54,7 +56,7 @@ def _identify(values):
         insert_eigenvalue = DB_CONNECTOR.insert_data(
             'eigenvalue', eigenvalue).inserted_id
 
-        record = Record(insert_eigenvalue)
+        record = Record(insert_eigenvalue, account)
         # print(record.data)
 
         insert_record_id = DB_CONNECTOR.insert_data(
