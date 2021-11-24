@@ -17,7 +17,7 @@ def _company_register(values):
     account.data['users'] = {}
     if the_same_docs is None:
 
-        account_id = DB_CONNECTOR.insert_data('accounts', account.data)
+        account_id = DB_CONNECTOR.insert_data('profile', account.data)
         account_name = account.data['account']
         logging.info('Create Accont : %s , InsertID : %s' %
                      (account_name, str(account_id)))
