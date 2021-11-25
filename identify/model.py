@@ -63,10 +63,13 @@ def _identify(values):
             'record', record.data).inserted_id
 
         result_data = DB_CONNECTOR.query_data(
-            'profile', {"account": account}, {"users": 1})
+            'profile', {"account": account}, {"users": 1, "user_detail": 1})
 
         account_profile_users = result_data[0]['users']
-        user_profile = account_profile_users[userid]
+        account_profile_user_detail = result_data[0]['user_detail']
+
+        target_user_index = account_profile_users.index(userid)
+        user_profile = account_profile_user_detail[target_user_index]
 
         match_user_cropimageid = user_profile['cropimageid']
         raw_image = fs.get(match_user_cropimageid).read()
