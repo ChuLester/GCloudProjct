@@ -18,4 +18,4 @@ logging.basicConfig(filename='run.log', level=logging.DEBUG,
 if __name__ == '__main__':
     # app.run(host='0.0.0.0', port=8085, debug=True)
     app.run(host='0.0.0.0', port=8080, debug=True, ssl_context=(
-        '../license/cert.pem', '../license/key.pem'))
+        '../../license/cert.pem', '../../license/key.pem'))

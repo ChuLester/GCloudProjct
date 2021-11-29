@@ -59,7 +59,7 @@ def reload_feature(account):
     account_profile = DB_CONNECTOR.query_data(
         'profile', {'account': account}, {'users': 1})
 
-    account_profile_users_list = list(account_profile[0]['users'].keys())
+    account_profile_users_list = account_profile[0]['users']
 
     account_all_eigenvalue = DB_CONNECTOR.query_data('eigenvalue', {'account': account, 'userid': {
                                                      '$in': account_profile_users_list}}, {'value': 1, 'userid': 1})

@@ -14,7 +14,8 @@ def _company_register(values):
         'profile', {'account': account.data['account']}, {'account': 1})
 
     account.data['password'] = generate_password_hash(account.data['password'])
-    account.data['users'] = {}
+    account.data['user_detail'] = []
+    account.data['users'] = []
     if the_same_docs is None:
 
         account_id = DB_CONNECTOR.insert_data('profile', account.data)

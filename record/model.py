@@ -11,9 +11,11 @@ def _cal_working_hours(values):
         values, collection_schema_dict['workhour'], is_include_account=True)
 
     result_user_data = DB_CONNECTOR.query_data(
-        'profile', {"account": account}, {"users": 1})
+        'profile', {"account": account}, {"users": 1, "user_detail": 1})
 
-    result_user_data = result_user_data[0]["users"]
+    result_users = result_user_data[0]["users"]
+    result_user_detail = result_user_data[0]["user_detail"]
+    result_user_data = dict(zip(result_users, result_user_detail))
 
     if 'starttime' in workhour_dict.keys() and 'endtime' in workhour_dict.keys():
         starttime = datetime.strptime(workhour_dict['starttime'], "%Y/%m/%d")
@@ -63,7 +65,7 @@ def cal_work_hours(clockin_dict):
         elif status == "OFF" and Clock_On:
             end_time = date
             start_time = ClockOn_time
-            day_hours = ((end_time - start_time).seconds) // (60 * 30)
+            day_hours = ((end_time - start_time).seconds) // (60 * 30) / 2
             detail_clockon_list.append([start_time.strftime(
                 "%Y/%m/%d %H:%M:%S"), end_time.strftime("%Y/%m/%d %H:%M:%S"), day_hours])
             total_hours = day_hours + total_hours
@@ -86,10 +88,12 @@ def _get_user_record(values):
         starttime = endtime - timedelta(days=30)
     print(endtime)
     result_user_data = DB_CONNECTOR.query_data(
-        'profile', {"account": account}, {"users": 1})
+        'profile', {"account": account}, {"users": 1, "user_detail": 1})
 
-    result_user_data = result_user_data[0]["users"]
-    print(result_user_data.keys())
+    result_users = result_user_data[0]["users"]
+    result_user_detail = result_user_data[0]["user_detail"]
+    result_user_data = dict(zip(result_users, result_user_detail))
+
     result_record_data = DB_CONNECTOR.query_data('record', {'account': account, "date": {
         "$gte": starttime, "$lt": endtime}, "status": {"$exists": True}, "userid": {"$exists": True}}, {'_id': 0})
 
