@@ -66,9 +66,14 @@ def _edit_user_profile(values):
             insert_eigenvalue = DB_CONNECTOR.insert_data(
                 'eigenvalue', eigenvalue).inserted_id
         else:
+<<<<<<< HEAD
             target_user_index = account_profile_users.index(user.data['name'])
             user_ori_imageid = account_profile_user_detail[target_user_index]['cropimageid']
             user.update_image(user_ori_imageid)
+=======
+            user_ori_imageid = account_profile_users[user.data['name']]['cropimageid']
+            user.upload_image(user_ori_imageid)
+>>>>>>> 2e40981204c0e1960ca4f0725500ddbc445756df
     else:
         return make_result_msg(False, error_code_dict[631])
 
