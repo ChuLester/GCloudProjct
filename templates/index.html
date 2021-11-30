@@ -1,0 +1,35 @@
+<html>
+
+<head>
+    <title>Google Sign-In</title>
+    <meta name="google-signin-client_id" content="{{ google_oauth2_client_id }}">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.js"
+        integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <script>
+        function onSignIn(googleUser) {
+            var id_token = googleUser.getAuthResponse().id_token;
+            var profile = googleUser.getBasicProfile();
+            console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+            console.log('Name: ' + profile.getName());
+            console.log('Image URL: ' + profile.getImageUrl());
+            console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+            $.ajax({
+                type: "POST",
+                url: '/login/google_login',
+                data: JSON.stringify({ 'token': id_token, 'id': profile.getId(), 'name': profile.getName(), 'mail': profile.getEmail() }),
+                success: function () {
+                    console.log('login success')
+                },
+                dataType: 'application/json',
+                contentType: "application/json",
+            });
+        }
+    </script>
+    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+</body>
+
+</html>

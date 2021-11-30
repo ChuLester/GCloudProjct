@@ -16,3 +16,5 @@ RecognizeConfig = {
 PayConfig = {
     'wage': 168
 }
+
+GOOGLE_OAUTH2_CLIENT_ID = '906711666561-evlhsmvgm4qcnu43gm09t417k2fuvu1f.apps.googleusercontent.com'

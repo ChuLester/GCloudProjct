@@ -1,10 +1,15 @@
 import logging
-from flask import Blueprint, request
+from flask import Blueprint, request, render_template
 from utils import make_result_msg
-from login.model import _login, _logout, _get_login_user
+from login.model import _login, _logout, _get_login_user, _google_login
 from error_code import error_code_dict
+from config import GOOGLE_OAUTH2_CLIENT_ID
 login_app = Blueprint('login', __name__)
 
+@login_app.route('/google_welcome_view')
+def google_welcome():
+    logging.info('Call Google Welcome')
+    return render_template('index.html', google_oauth2_client_id=GOOGLE_OAUTH2_CLIENT_ID)
 
 @login_app.route('/google_login', methods=['POST'])
 def google_login():
@@ -18,6 +23,12 @@ def google_login():
     output:
         'status' : True
     """
+    logging.info('Call Google Login') 
+    if request.method == 'POST':
+        result_string = _google_login(request.get_json())
+        return result_string
+    else:
+        return make_result_msg(False, error_msg=error_code_dict[600])
 
 
 @login_app.route('/login', methods=['POST'])

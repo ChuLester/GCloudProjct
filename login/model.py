@@ -1,9 +1,12 @@
 import logging
+from google.oauth2 import id_token
+from google.auth.transport import requests
 from utils import get_account_collection, make_result_msg, reload_feature
 from schema import request_to_dict, collection_schema_dict, google_to_account
 from model import DB_CONNECTOR, FACE_COMPAROR_DICT
 from werkzeug.security import check_password_hash
 from error_code import error_code_dict
+from config import GOOGLE_OAUTH2_CLIENT_ID
 
 
 def _google_login(values):
@@ -11,11 +14,33 @@ def _google_login(values):
         values, collection_schema_dict['google_account'])
 
     account = google_to_account(google_account_dict)
+    token = account.data['third_party']['token']
+    try:
+        # Specify the GOOGLE_OAUTH2_CLIENT_ID of the app that accesses the backend:
+        id_info = id_token.verify_oauth2_token(
+            token,
+            requests.Request(),
+            GOOGLE_OAUTH2_CLIENT_ID
+        )
+
+        if id_info['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
+            raise ValueError('Wrong issuer.')
+
+        # ID token is valid. Get the user's Google Account ID from the decoded token.
+        # user_id = id_info['sub']
+        # reference: https://developers.google.com/identity/sign-in/web/backend-auth
+    except ValueError:
+        # Invalid token
+        # raise ValueError('Invalid token')
+        return make_result_msg(False, error_code_dict[613])
+
     the_same_docs = DB_CONNECTOR.query_data(
         'profile', {'account': account.data['account']}, {'account': 1})
 
     if the_same_docs is None:
-        account_id = DB_CONNECTOR.insert_data('profile', {account.data})
+        account.data['users'] = []
+        account.data['user_detail'] = []
+        account_id = DB_CONNECTOR.insert_data('profile', account.data)
         account_name = account.data['account']
         logging.info('Create Accont : %s , InsertID : %s' %
                      (account_name, str(account_id)))
