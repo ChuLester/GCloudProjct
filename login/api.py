@@ -6,6 +6,20 @@ from error_code import error_code_dict
 login_app = Blueprint('login', __name__)
 
 
+@login_app.route('/google_login', methods=['POST'])
+def google_login():
+    """
+    input:
+        'id' : 'google account id',
+        'name': 'google name',
+        'mail': 'google account email address',
+        'token': 'google token'
+
+    output:
+        'status' : True
+    """
+
+
 @login_app.route('/login', methods=['POST'])
 def login():
     """

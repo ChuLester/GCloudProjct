@@ -117,6 +117,19 @@ def eigenvalue_to_dict(userid, value, imageid, account):
     return out_dict
 
 
+def google_to_account(google_account_dict):
+    out_dict = {}
+    out_dict['account'] = google_account_dict['id']
+    out_dict['password'] = None
+    out_dict['mail'] = google_account_dict['mail']
+    out_dict['workspace'] = google_account_dict['name']
+    out_dict['third_party'] = {
+        'platform': 'google',
+        'token': google_account_dict['token']
+    }
+    return Account(out_dict)
+
+
 collection_schema_dict = {}
 collection_schema_dict['account'] = ['_id', 'account',
                                      'password', 'mail', 'workspace', 'third_party']
@@ -132,3 +145,4 @@ collection_schema_dict['login'] = ['account', 'password']
 collection_schema_dict['logout'] = ['account']
 collection_schema_dict['identify'] = ['cropimage']
 collection_schema_dict['workhour'] = ['starttime', 'endtime']
+collection_schema_dict['google_account'] = ['token', 'mail', 'name', 'id']

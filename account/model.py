@@ -2,7 +2,7 @@ import logging
 from model import DB_CONNECTOR
 from core.face_process.face_comparor import Face_Comparor
 from utils import make_result_msg, check_account_exist, get_account_collection
-from schema import Account, request_to_dict, collection_schema_dict
+from schema import Account, request_to_dict, collection_schema_dict, google_to_account
 from werkzeug.security import generate_password_hash
 
 

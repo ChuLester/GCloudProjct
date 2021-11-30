@@ -1,9 +1,29 @@
 import logging
 from utils import get_account_collection, make_result_msg, reload_feature
-from schema import request_to_dict, collection_schema_dict
+from schema import request_to_dict, collection_schema_dict, google_to_account
 from model import DB_CONNECTOR, FACE_COMPAROR_DICT
 from werkzeug.security import check_password_hash
 from error_code import error_code_dict
+
+
+def _google_login(values):
+    google_account_dict = request_to_dict(
+        values, collection_schema_dict['google_account'])
+
+    account = google_to_account(google_account_dict)
+    the_same_docs = DB_CONNECTOR.query_data(
+        'profile', {'account': account.data['account']}, {'account': 1})
+
+    if the_same_docs is None:
+        account_id = DB_CONNECTOR.insert_data('profile', {account.data})
+        account_name = account.data['account']
+        logging.info('Create Accont : %s , InsertID : %s' %
+                     (account_name, str(account_id)))
+
+    reload_feature(account.data['account'])
+    logging.info('%s login' % (account.data['account']))
+
+    return make_result_msg(True)
 
 
 def _get_login_user():
