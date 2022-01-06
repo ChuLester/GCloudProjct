@@ -10,21 +10,25 @@ from error_code import error_code_dict
 
 
 def _clockin(values):
-    account, clockin_info = request_to_dict(
+    logging.info(values)
+    account, clockin_info, loss_argument = request_to_dict(
         values, collection_schema_dict['clockin'], is_include_account=True)
+
+    if loss_argument:
+        return make_result_msg(False, error_msg=error_code_dict[601], result=loss_argument)
 
     clockin = Clockin(clockin_info)
 
     if clockin_info['status'] in ['ON', 'OFF']:
 
         eigenvalue_id = DB_CONNECTOR.query_data('record', {'_id': ObjectId(
-            clockin.data['recordID'])}, {'eigenvalue': 1})[0]['eigenvalue']
+            clockin.data['record_object_id'])}, {'eigenvalue': 1})[0]['eigenvalue']
 
         DB_CONNECTOR.update_data('eigenvalue', {'account': account,
-                                 '_id': eigenvalue_id}, {'userid': clockin.data['userid']})
+                                 '_id': eigenvalue_id}, {'userid': clockin.data['user_object_id']})
 
         DB_CONNECTOR.update_data('record', {'_id': ObjectId(
-            clockin.data['recordID'])}, clockin.data)
+            clockin.data['record_object_id'])}, clockin.data)
         print(clockin.data)
 
         return make_result_msg(True)
@@ -33,21 +37,31 @@ def _clockin(values):
 
 
 def _identify(values):
-    account, identify_info = request_to_dict(
+    logging.info(values)
+    account, identify_info, loss_argument = request_to_dict(
         values, collection_schema_dict['identify'], is_include_account=True)
 
-    if account not in FACE_COMPAROR_DICT:
+    if loss_argument:
+        return make_result_msg(False, error_msg=error_code_dict[601], result=loss_argument)
+
+    if account not in FACE_COMPAROR_DICT.keys():
         return make_result_msg(False, error_code_dict[621])
 
     if len(FACE_COMPAROR_DICT[account].eigenvalue_data_list) == 0:
         return make_result_msg(False, error_code_dict[641], None)
 
     encode_image = values['cropimage'].encode()
-    fs = gridfs.GridFS(DB_CONNECTOR.db, 'image')
-    image_id = fs.put(encode_image)
 
-    landmarks = values['landmarks']
+    fs = gridfs.GridFS(DB_CONNECTOR.db, 'image')
+
+    landmarks = values['landmark']
+
     face_embedding = extract_face(encode_image, landmarks)
+
+    if face_embedding == None:
+        return make_result_msg(False, error_msg=error_code_dict[650])
+
+    image_id = fs.put(encode_image)
     eigenvalue = eigenvalue_to_dict(None, face_embedding, image_id, account)
     userid, cosine_distance = FACE_COMPAROR_DICT[account].identify(
         face_embedding)
@@ -80,8 +94,8 @@ def _identify(values):
         out_dict = {}
         out_dict['username'] = username
         out_dict['manager'] = user_profile['manager']
-        out_dict['user_id'] = username
-        out_dict['record_id'] = str(insert_record_id)
+        out_dict['user_object_id'] = username
+        out_dict['record_object_id'] = str(insert_record_id)
         out_dict['image'] = str(raw_image)[1:]
         return make_result_msg(True, error_msg=None, result=out_dict)
     else:
@@ -89,6 +103,7 @@ def _identify(values):
 
 
 def _update_face_feature(values):
+    logging.info(values)
     global DB_CONNECTOR
     account = values['account']
     this_account_collection = get_account_collection(account)

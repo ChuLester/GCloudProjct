@@ -9,9 +9,10 @@ from core.face_process.face_comparor import Face_Comparor
 
 
 def decode_image(base64_buffer):
-    raw_image = bytes(base64_buffer[1:])
+    print(base64_buffer)
+    raw_image = base64_buffer
     raw_image = base64.decodebytes(raw_image)
-
+    
     raw_image = np.frombuffer(raw_image, np.uint8).reshape(-1, 1)
     image = cv2.imdecode(raw_image, cv2.IMREAD_COLOR)
     return image
@@ -19,6 +20,8 @@ def decode_image(base64_buffer):
 
 def extract_face(encode_image, landmarks):
     face_image = decode_image(encode_image)
+    if type(face_image) == type(None):
+        return None
     # cv2.imwrite('%f.jpg'%(time.time()),face_image)
     t1 = time.time()
     face_embedding = INFERENCE_CLIENT.predict(face_image, landmarks)
@@ -65,3 +68,5 @@ def reload_feature(account):
                                                      '$in': account_profile_users_list}}, {'value': 1, 'userid': 1})
 
     FACE_COMPAROR_DICT[account] = Face_Comparor(account_all_eigenvalue)
+    for user_name in FACE_COMPAROR_DICT[account].user_data_list:
+        print(user_name)

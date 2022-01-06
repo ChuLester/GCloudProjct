@@ -10,8 +10,12 @@ from config import GOOGLE_OAUTH2_CLIENT_ID
 
 
 def _google_login(values):
-    google_account_dict = request_to_dict(
+    logging.info(values)
+    google_account_dict, loss_argument = request_to_dict(
         values, collection_schema_dict['google_account'])
+
+    if loss_argument:
+        return make_result_msg(False, error_msg=error_code_dict[601], result=loss_argument)
 
     account = google_to_account(google_account_dict)
     token = account.data['third_party']['token']
@@ -23,8 +27,11 @@ def _google_login(values):
             GOOGLE_OAUTH2_CLIENT_ID
         )
 
+        print(id_info)
+
         if id_info['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
             raise ValueError('Wrong issuer.')
+
 
         # ID token is valid. Get the user's Google Account ID from the decoded token.
         # user_id = id_info['sub']
@@ -32,7 +39,7 @@ def _google_login(values):
     except ValueError:
         # Invalid token
         # raise ValueError('Invalid token')
-        return make_result_msg(False, error_code_dict[613])
+        return make_result_msg(False, error_code_dict[613], False)
 
     the_same_docs = DB_CONNECTOR.query_data(
         'profile', {'account': account.data['account']}, {'account': 1})
@@ -48,7 +55,7 @@ def _google_login(values):
     reload_feature(account.data['account'])
     logging.info('%s login' % (account.data['account']))
 
-    return make_result_msg(True)
+    return make_result_msg(True, None, True)
 
 
 def _get_login_user():
@@ -56,7 +63,11 @@ def _get_login_user():
 
 
 def _login(values):
-    login_info = request_to_dict(values, collection_schema_dict['login'])
+    logging.info(values)
+    login_info, loss_argument = request_to_dict(
+        values, collection_schema_dict['login'])
+    if loss_argument:
+        return make_result_msg(False, error_msg=error_code_dict[601], result=loss_argument)
     account = login_info['account']
     password = login_info['password']
 
@@ -67,19 +78,23 @@ def _login(values):
         if check_password_hash(the_same_docs[0]['password'], password):
             reload_feature(login_info['account'])
             logging.info('%s login' % (login_info['account']))
-            return make_result_msg(True)
+            return make_result_msg(True, None, True)
         else:
-            return make_result_msg(False, error_code_dict[620])
+            return make_result_msg(False, error_code_dict[620], False)
     else:
-        return make_result_msg(False, error_code_dict[611])
+        return make_result_msg(False, error_code_dict[611], False)
 
 
 def _logout(values):
-    logout_info = request_to_dict(values, collection_schema_dict['logout'])
+    logging.info(values)
+    logout_info, loss_argument = request_to_dict(
+        values, collection_schema_dict['logout'])
+    if loss_argument:
+        return make_result_msg(False, error_msg=error_code_dict[601], result=loss_argument)
     if logout_info['account'] in FACE_COMPAROR_DICT:
         del FACE_COMPAROR_DICT[logout_info['account']]
 
         logging.info('%s logout' % (logout_info['account']))
-        return make_result_msg(True)
+        return make_result_msg(True, None, True)
     else:
-        return make_result_msg(False, error_code_dict[621])
+        return make_result_msg(False, error_code_dict[621], False)

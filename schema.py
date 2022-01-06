@@ -6,13 +6,17 @@ from datetime import datetime
 
 def request_to_dict(values, collection_schema, is_include_account=False):
     out_dict = {}
+    loss_argument = []
     for key in collection_schema:
         if key in values.keys():
             out_dict[key] = values[key]
+        else:
+            loss_argument.append(key)
+
     if is_include_account:
-        return values['account'], out_dict
+        return values['account'], out_dict, loss_argument
     else:
-        return out_dict
+        return out_dict, loss_argument
 
 
 class Account:
@@ -95,10 +99,10 @@ class Clockin:
         self.objectid_construct()
 
     def objectid_construct(self):
-        self.data['userid'] = self.data['userid']
+        self.data['user_object_id'] = self.data['user_object_id']
         self.data['date'] = datetime.strptime(
             self.data['date'], "%Y/%m/%d %H:%M:%S")
-        self.data['recordID'] = ObjectId(self.data['recordID'])
+        self.data['record_object_id'] = ObjectId(self.data['record_object_id'])
 
 
 class Record:
@@ -131,16 +135,20 @@ def google_to_account(google_account_dict):
 
 
 collection_schema_dict = {}
-collection_schema_dict['account'] = ['_id', 'account',
+collection_schema_dict['account'] = ['account',
                                      'password', 'mail', 'workspace', 'third_party']
-collection_schema_dict['user'] = ['_id', 'name',
-                                  'phone', 'mail', 'sex', 'birthday', 'manager', 'face', 'wage']
+collection_schema_dict['user'] = ['name',
+                                  'phone', 'mail', 'sex', 'birthday', 'manager', 'face', 'wage', 'landmark']
+
+collection_schema_dict['edituser'] = ['name',
+                                      'phone', 'mail', 'sex', 'birthday', 'manager', 'wage']
+
 collection_schema_dict['eigenvalue'] = [
-    '_id', 'userid', 'value', 'cropimageID']
-collection_schema_dict['record'] = ['_id', 'cropimageID', 'eigenvalue']
+    'userid', 'value', 'cropimageID']
+collection_schema_dict['record'] = ['cropimageID', 'eigenvalue']
 collection_schema_dict['clockin'] = [
-    'account', 'userid', 'date', 'recordID', 'status']
-collection_schema_dict['image'] = ['_id', 'file']
+    'account', 'user_object_id', 'date', 'record_object_id', 'status']
+collection_schema_dict['image'] = ['file']
 collection_schema_dict['login'] = ['account', 'password']
 collection_schema_dict['logout'] = ['account']
 collection_schema_dict['identify'] = ['cropimage']

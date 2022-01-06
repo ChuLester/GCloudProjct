@@ -11,9 +11,9 @@ def clockin():
     """
     input:
         'account' : company account's name.
-        'userid' : user object id which link record data and eigenvalue data.
+        'user_object_id' : user object id which link record data and eigenvalue data.
         'date' : user clockin time.
-        'recordID': record object id link user.
+        'record_object_id': record object id link user.
         'status' : ON work or OFF work 
     output:
         result_string:

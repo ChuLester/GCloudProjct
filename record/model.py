@@ -3,12 +3,17 @@ from utils import make_result_msg, get_account_collection
 from schema import request_to_dict, collection_schema_dict
 from model import DB_CONNECTOR
 from datetime import datetime, timedelta
+import logging
+from error_code import error_code_dict
 
 
 def _cal_working_hours(values):
-
-    account, workhour_dict = request_to_dict(
+    logging.info(values)
+    account, workhour_dict, loss_argument = request_to_dict(
         values, collection_schema_dict['workhour'], is_include_account=True)
+
+    # if loss_argument:
+    #     return make_result_msg(False, error_msg=error_code_dict[601], result=loss_argument)
 
     result_user_data = DB_CONNECTOR.query_data(
         'profile', {"account": account}, {"users": 1, "user_detail": 1})
@@ -27,12 +32,12 @@ def _cal_working_hours(values):
 
     expression_list = []
     expression_list.append(
-        {"$match": {"account": account, "userid": {"$exists": True}, "status": {"$exists": True}}})
+        {"$match": {"account": account, "user_object_id": {"$exists": True}, "status": {"$exists": True}}})
     # expression_list.append({"$project": {"status": "$status", "_id": "$_id",
     #                        "userid": "$userid", "date": {"$dateFromString": {"dateString": "$date"}}}})
     expression_list.append(
         {"$match": {"date": {"$gte": starttime, "$lte": endtime}}})
-    expression_list.append({"$group": {"_id": "$userid", "result_list": {
+    expression_list.append({"$group": {"_id": "$user_object_id", "result_list": {
                            "$push": {"status": "$status", "date": "$date"}}}})
     expression_list.append({"$sort": {"result_list.date": 1}})
 
@@ -40,6 +45,7 @@ def _cal_working_hours(values):
 
     user_hour_dict = {}
     for user_clockin_doc in result_record_data:
+        print(user_clockin_doc)
         user_name = user_clockin_doc['_id']
         user_wage = result_user_data[user_name]['wage']
         detail_clockon_list, work_hours = cal_work_hours(
@@ -75,9 +81,12 @@ def cal_work_hours(clockin_dict):
 
 
 def _get_user_record(values):
-
-    account, workhour_dict = request_to_dict(
+    logging.info(values)
+    account, workhour_dict, loss_argument = request_to_dict(
         values, collection_schema_dict['workhour'], is_include_account=True)
+
+    # if loss_argument:
+    #     return make_result_msg(False, error_msg=error_code_dict[601], result=loss_argument)
 
     if 'starttime' in workhour_dict.keys() and 'endtime' in workhour_dict.keys():
         starttime = datetime.strptime(workhour_dict['starttime'], "%Y/%m/%d")
@@ -85,8 +94,9 @@ def _get_user_record(values):
             workhour_dict['endtime'], "%Y/%m/%d") + timedelta(days=1)
     else:
         endtime = datetime.today() + timedelta(days=1)
-        starttime = endtime - timedelta(days=30)
-    print(endtime)
+        starttime = endtime - timedelta(days=365)
+    print('start time : ', starttime)
+    print('end time : ', endtime)
     result_user_data = DB_CONNECTOR.query_data(
         'profile', {"account": account}, {"users": 1, "user_detail": 1})
 
@@ -95,7 +105,7 @@ def _get_user_record(values):
     result_user_data = dict(zip(result_users, result_user_detail))
 
     result_record_data = DB_CONNECTOR.query_data('record', {'account': account, "date": {
-        "$gte": starttime, "$lt": endtime}, "status": {"$exists": True}, "userid": {"$exists": True}}, {'_id': 0})
+        "$gte": starttime, "$lt": endtime}, "status": {"$exists": True}, "user_object_id": {"$exists": True}}, {'_id': 0})
 
     fs = gridfs.GridFS(DB_CONNECTOR.db, 'image')
 
@@ -105,11 +115,13 @@ def _get_user_record(values):
     output = []
 
     for doc in result_record_data:
+        print(doc)
+        target_user_index = result_users.index(doc['user_object_id'])
         raw_image = fs.get(
-            result_user_data[doc['userid']]['cropimageid']).read()
+            result_user_detail[target_user_index]['cropimageid']).read()
         raw_image = str(raw_image)[1:]
         out_record = {
-            'user': doc['userid'],
+            'user': doc['user_object_id'],
             'date': doc['date'].strftime("%Y/%m/%d %H:%M:%S"),
             'status': doc['status'],
             'image': raw_image
