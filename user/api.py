@@ -2,7 +2,7 @@ import logging
 import gridfs
 from flask import request, Blueprint
 from utils import make_result_msg
-from user.model import _user_register, _edit_user_profile, _get_user_profile
+from user.model import _user_register, _edit_user_profile, _get_user_profile, _check_manager_pin, _set_manager_pin
 from error_code import error_code_dict
 user_app = Blueprint('user', __name__)
 
@@ -43,7 +43,7 @@ def get_user_profile():
         account : company account's name
     output:
         if success:
-            status : 
+            status :
                 True
             result:
                 'account' : company account name which user belongs.
@@ -54,6 +54,7 @@ def get_user_profile():
                 'face' : when Identify accept ,print user face image.
                 'user' : user name
                 'wage' : user salary for hour
+
             error_msg:
                 None
         else:
@@ -86,9 +87,10 @@ def edit_user_profile():
         landmarks : five face landmark.
         user : user name
         wage : user salary for hour
+        enable : enable or disable
     output:
         if success:
-            status : 
+            status :
                 True
             result:
                 None
@@ -107,6 +109,75 @@ def edit_user_profile():
     logging.info('Call edit user profile.')
     if request.method == 'POST':
         result_string = _edit_user_profile(request.get_json())
+        return result_string
+    else:
+        return make_result_msg(False, error_msg=error_code_dict[600])
+
+
+@user_app.route('/check_manager_pin', methods=['POST'])
+def check_manager_pin():
+    """
+    input:
+        account : company account's name
+        user : user name
+        pin : pin number
+    output:
+        if success:
+            status :
+                True
+            result:
+                None
+            error_msg:
+                None
+        else:
+            status :
+                False
+            result:
+                None
+            error_msg:
+                if no match user : No match user.
+                if no match account : Account was not register.
+                if user isn't manager : Permission issue.
+                if no set PIN: Please set pin number.
+
+    """
+    logging.info('Call check manager pin.')
+    if request.method == 'POST':
+        result_string = _check_manager_pin(request.get_json())
+        return result_string
+    else:
+        return make_result_msg(False, error_msg=error_code_dict[600])
+
+
+@user_app.route('/set_manager_pin', methods=['POST'])
+def set_manager_pin():
+    """
+    input:
+        account : company account's name
+        user : user name
+        pin : pin number
+    output:
+        if success:
+            status :
+                True
+            result:
+                None
+            error_msg:
+                None
+        else:
+            status :
+                False
+            result:
+                None
+            error_msg:
+                if no match user : No match user.
+                if no match account : Account was not register.
+                if user isn't manager : Permission issue.
+
+    """
+    logging.info('Call set manager pin.')
+    if request.method == 'POST':
+        result_string = _set_manager_pin(request.get_json())
         return result_string
     else:
         return make_result_msg(False, error_msg=error_code_dict[600])

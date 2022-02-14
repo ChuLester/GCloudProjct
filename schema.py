@@ -14,7 +14,11 @@ def request_to_dict(values, collection_schema, is_include_account=False):
             loss_argument.append(key)
 
     if is_include_account:
-        return values['account'], out_dict, loss_argument
+        if 'account' not in values:
+            loss_argument.append(key)
+            return None, out_dict, loss_argument
+        else:
+            return values['account'], out_dict, loss_argument
     else:
         return out_dict, loss_argument
 
@@ -129,7 +133,7 @@ def google_to_account(google_account_dict):
     out_dict['workspace'] = google_account_dict['name']
     out_dict['third_party'] = {
         'platform': 'google',
-        'token': google_account_dict['token']
+        # 'token': google_account_dict['token']
     }
     return Account(out_dict)
 
@@ -141,7 +145,7 @@ collection_schema_dict['user'] = ['name',
                                   'phone', 'mail', 'sex', 'birthday', 'manager', 'face', 'wage', 'landmark']
 
 collection_schema_dict['edituser'] = ['name',
-                                      'phone', 'mail', 'sex', 'birthday', 'manager', 'wage']
+                                      'phone', 'mail', 'sex', 'birthday', 'manager', 'wage', 'enable']
 
 collection_schema_dict['eigenvalue'] = [
     'userid', 'value', 'cropimageID']
@@ -153,4 +157,8 @@ collection_schema_dict['login'] = ['account', 'password']
 collection_schema_dict['logout'] = ['account']
 collection_schema_dict['identify'] = ['cropimage']
 collection_schema_dict['workhour'] = ['starttime', 'endtime']
-collection_schema_dict['google_account'] = ['token', 'mail', 'name', 'id']
+# collection_schema_dict['google_account'] = ['token', 'mail', 'name', 'id']
+collection_schema_dict['google_account'] = ['mail', 'name', 'id']
+collection_schema_dict['edit_record'] = [
+    'user', 'status', 'origin_time', 'edit_time', ]
+collection_schema_dict['manager_pin'] = ['user', 'pin']

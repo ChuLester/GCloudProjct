@@ -18,3 +18,4 @@ PayConfig = {
 }
 
 GOOGLE_OAUTH2_CLIENT_ID = '906711666561-evlhsmvgm4qcnu43gm09t417k2fuvu1f.apps.googleusercontent.com'
+# GOOGLE_OAUTH2_CLIENT_ID = '601125171784-532sb9rtfbc4ct3m30unt4fb6pmc0n8o.apps.googleusercontent.com'

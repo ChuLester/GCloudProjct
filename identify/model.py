@@ -29,7 +29,7 @@ def _clockin(values):
 
         DB_CONNECTOR.update_data('record', {'_id': ObjectId(
             clockin.data['record_object_id'])}, clockin.data)
-        print(clockin.data)
+        #print(clockin.data)
 
         return make_result_msg(True)
     else:

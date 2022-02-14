@@ -26,7 +26,6 @@ def _get_user_profile(values):
     user_list = []
     for user_name in result_data.keys():
         user = result_data[user_name]
-        print(user)
         user['face'] = str(fs.get(user['cropimageid']).read())[1:]
         del user['cropimageid']
         user_list.append(user)
@@ -43,6 +42,10 @@ def _edit_user_profile(values):
     if 'wage' in loss_argument:
         user_dict['wage'] = PayConfig['wage']
         loss_argument.remove('wage')
+
+    if 'enable' in loss_argument:
+        user_dict['enable'] = True
+        loss_argument.remove('enable')
 
     if loss_argument:
         return make_result_msg(False, error_msg=error_code_dict[601], result=loss_argument)
@@ -64,7 +67,7 @@ def _edit_user_profile(values):
         if 'face' in values.keys():
             fs = gridfs.GridFS(
                 DB_CONNECTOR.db, 'image')
-            encode_image = values['user'].encode()
+            encode_image = values['face'].encode()
             image_id = fs.put(encode_image)
             user.update_image(image_id)
 
@@ -89,6 +92,7 @@ def _edit_user_profile(values):
     DB_CONNECTOR.update_data('profile', {
         'account': account}, {'user_detail': account_profile_user_detail})
 
+    reload_feature(account)
     return make_result_msg(True)
 
 
@@ -106,6 +110,7 @@ def _user_register(values):
 
     del user_dict['face']
 
+    user_dict['enable'] = True
     user = User(user_dict)
     the_same_docs = DB_CONNECTOR.query_data(
         'profile', {'account': account}, {'account': 1,
@@ -130,8 +135,10 @@ def _user_register(values):
     encode_image = values['face'].encode()
 
     landmarks = values['landmark']
-    print(landmarks)
     face_embedding = extract_face(encode_image, landmarks)
+
+    # landmark won't save.
+    del user.data['landmark']
 
     if face_embedding == None:
         return make_result_msg(False, error_msg=error_code_dict[650])
@@ -147,6 +154,9 @@ def _user_register(values):
 
     user.update_image(image_id)
 
+    # default enabel:True
+    user.data['enable'] = True
+
     account_profile_users.append(user.data['name'])
     account_profile_user_detail.append(user.data)
     DB_CONNECTOR.update_data('profile', {'account': account}, {
@@ -154,4 +164,88 @@ def _user_register(values):
                              'user_detail': account_profile_user_detail})
 
     reload_feature(account)
+    return make_result_msg(True)
+
+
+def _check_manager_pin(values):
+    logging.info(values)
+    account, manager_pin_dict, loss_argument = request_to_dict(
+        values, collection_schema_dict['manager_pin'], is_include_account=True)
+
+    if loss_argument:
+        return make_result_msg(False, error_msg=error_code_dict[601], result=loss_argument)
+
+    the_same_docs = DB_CONNECTOR.query_data(
+        'profile', {'account': account}, {'account': 1,
+                                          'users': 1,
+                                          'user_detail': 1})
+
+    if not(the_same_docs):
+        logging.warning('Account was not register.')
+        return make_result_msg(False, error_msg=error_code_dict[611])
+
+    account_profile = the_same_docs[0]
+    account_profile_users = account_profile['users']
+    account_profile_user_detail = account_profile['user_detail']
+
+    if manager_pin_dict['user'] in account_profile['users']:
+        target_user_index = account_profile_users.index(
+            manager_pin_dict['user'])
+        user_detail = account_profile_user_detail[target_user_index]
+        if 'enable' in user_detail.keys():
+            if user_detail['enable'] == 'False':
+                return make_result_msg(False, error_msg=error_code_dict[632], result=False)
+
+        if user_detail['manager'] == False:
+            return make_result_msg(False, error_msg=error_code_dict[634], result=False)
+
+        if 'pin' in user_detail.keys():
+            if user_detail['pin'] == manager_pin_dict['pin']:
+                return make_result_msg(True, error_msg=None, result=True)
+        else:
+            return make_result_msg(False, error_msg=error_code_dict[633], result=False)
+    else:
+        return make_result_msg(False, error_msg=error_code_dict[631], result=False)
+
+
+def _set_manager_pin(values):
+    logging.info(values)
+    account, manager_pin_dict, loss_argument = request_to_dict(
+        values, collection_schema_dict['manager_pin'], is_include_account=True)
+
+    if loss_argument:
+        return make_result_msg(False, error_msg=error_code_dict[601], result=loss_argument)
+
+    the_same_docs = DB_CONNECTOR.query_data(
+        'profile', {'account': account}, {'account': 1,
+                                          'users': 1,
+                                          'user_detail': 1})
+
+    if not(the_same_docs):
+        logging.warning('Account was not register.')
+        return make_result_msg(False, error_msg=error_code_dict[611])
+
+    account_profile = the_same_docs[0]
+    account_profile_users = account_profile['users']
+    account_profile_user_detail = account_profile['user_detail']
+
+    if manager_pin_dict['user'] in account_profile['users']:
+        target_user_index = account_profile_users.index(
+            manager_pin_dict['user'])
+        user_detail = account_profile_user_detail[target_user_index]
+        if 'enable' in user_detail.keys():
+            if user_detail['enable'] == 'False':
+                return make_result_msg(False, error_msg=error_code_dict[632], result=None)
+
+        if user_detail['manager'] == False:
+            return make_result_msg(False, error_msg=error_code_dict[634], result=None)
+
+        user_detail['pin'] = manager_pin_dict['pin']
+        account_profile_user_detail[target_user_index] = user_detail
+    else:
+        return make_result_msg(False, error_msg=error_code_dict[631], result=False)
+
+    DB_CONNECTOR.update_data('profile', {'account': account}, {
+                             'user_detail': account_profile_user_detail})
+
     return make_result_msg(True)

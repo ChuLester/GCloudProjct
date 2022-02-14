@@ -21,8 +21,8 @@ class InferenceClient:
         self.face_aligment = FaceAligment()
 
     def predict(self, input_image, landmarks):
-        print(input_image.shape)
-        print(landmarks)
+        #print(input_image.shape)
+        #print(landmarks)
         image = input_image
         image = self.face_aligment.aligment(image, landmarks)
         image = image.transpose((2, 0, 1))

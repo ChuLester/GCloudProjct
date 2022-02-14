@@ -18,28 +18,27 @@ def _google_login(values):
         return make_result_msg(False, error_msg=error_code_dict[601], result=loss_argument)
 
     account = google_to_account(google_account_dict)
-    token = account.data['third_party']['token']
-    try:
-        # Specify the GOOGLE_OAUTH2_CLIENT_ID of the app that accesses the backend:
-        id_info = id_token.verify_oauth2_token(
-            token,
-            requests.Request(),
-            GOOGLE_OAUTH2_CLIENT_ID
-        )
+    # token = account.data['third_party']['token']
+    # try:
+    #     # Specify the GOOGLE_OAUTH2_CLIENT_ID of the app that accesses the backend:
+    #     id_info = id_token.verify_oauth2_token(
+    #         token,
+    #         requests.Request(),
+    #         GOOGLE_OAUTH2_CLIENT_ID
+    #     )
 
-        print(id_info)
+    #     # print(id_info)
 
-        if id_info['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
-            raise ValueError('Wrong issuer.')
+    #     if id_info['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
+    #         raise ValueError('Wrong issuer.')
 
-
-        # ID token is valid. Get the user's Google Account ID from the decoded token.
-        # user_id = id_info['sub']
-        # reference: https://developers.google.com/identity/sign-in/web/backend-auth
-    except ValueError:
-        # Invalid token
-        # raise ValueError('Invalid token')
-        return make_result_msg(False, error_code_dict[613], False)
+    #     # ID token is valid. Get the user's Google Account ID from the decoded token.
+    #     # user_id = id_info['sub']
+    #     # reference: https://developers.google.com/identity/sign-in/web/backend-auth
+    # except ValueError:
+    #     # Invalid token
+    #     # raise ValueError('Invalid token')
+    #     return make_result_msg(False, error_code_dict[613], False)
 
     the_same_docs = DB_CONNECTOR.query_data(
         'profile', {'account': account.data['account']}, {'account': 1})

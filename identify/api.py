@@ -3,6 +3,7 @@ from flask import request, Blueprint
 from utils import make_result_msg
 from identify.model import _clockin, _identify, _update_face_feature
 from error_code import error_code_dict
+import sys
 identify_app = Blueprint('identify', __name__)
 
 
@@ -14,7 +15,7 @@ def clockin():
         'user_object_id' : user object id which link record data and eigenvalue data.
         'date' : user clockin time.
         'record_object_id': record object id link user.
-        'status' : ON work or OFF work 
+        'status' : ON work or OFF work.
     output:
         result_string:
             if status is not [ON,OFF]:

@@ -9,10 +9,10 @@ from core.face_process.face_comparor import Face_Comparor
 
 
 def decode_image(base64_buffer):
-    print(base64_buffer)
+    # print(base64_buffer)
     raw_image = base64_buffer
     raw_image = base64.decodebytes(raw_image)
-    
+
     raw_image = np.frombuffer(raw_image, np.uint8).reshape(-1, 1)
     image = cv2.imdecode(raw_image, cv2.IMREAD_COLOR)
     return image
@@ -25,7 +25,7 @@ def extract_face(encode_image, landmarks):
     # cv2.imwrite('%f.jpg'%(time.time()),face_image)
     t1 = time.time()
     face_embedding = INFERENCE_CLIENT.predict(face_image, landmarks)
-    print('Extract Using time : ', (time.time() - t1))
+    #print('Extract Using time : ', (time.time() - t1))
     return face_embedding
 
 
@@ -43,7 +43,7 @@ def get_account_collection(account_name):
 
 def check_account_exist(account):
     the_same_docs = DB_CONNECTOR.query_data(
-        'accounts', {'account': account}, {'account': 1})
+        'profile', {'account': account}, {'account': 1})
     if the_same_docs is None:
         return False
     else:
@@ -60,13 +60,19 @@ def make_result_msg(status, error_msg=None, result=None):
 
 def reload_feature(account):
     account_profile = DB_CONNECTOR.query_data(
-        'profile', {'account': account}, {'users': 1})
+        'profile', {'account': account}, {'user_detail': 1})
 
-    account_profile_users_list = account_profile[0]['users']
+    account_profile_users_list = []
+    account_profile_user_detail_list = account_profile[0]['user_detail']
+    for user_detail in account_profile_user_detail_list:
+        if 'enable' in user_detail:
+            if user_detail['enable'] == False:
+                continue
+        account_profile_users_list.append(user_detail['name'])
 
     account_all_eigenvalue = DB_CONNECTOR.query_data('eigenvalue', {'account': account, 'userid': {
                                                      '$in': account_profile_users_list}}, {'value': 1, 'userid': 1})
 
     FACE_COMPAROR_DICT[account] = Face_Comparor(account_all_eigenvalue)
-    for user_name in FACE_COMPAROR_DICT[account].user_data_list:
-        print(user_name)
+
+    # print(FACE_COMPAROR_DICT[account].user_data_list)

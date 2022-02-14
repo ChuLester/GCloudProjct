@@ -5,6 +5,7 @@ from model import DB_CONNECTOR
 from datetime import datetime, timedelta
 import logging
 from error_code import error_code_dict
+from bson.objectid import ObjectId
 
 
 def _cal_working_hours(values):
@@ -45,7 +46,7 @@ def _cal_working_hours(values):
 
     user_hour_dict = {}
     for user_clockin_doc in result_record_data:
-        print(user_clockin_doc)
+        # print(user_clockin_doc)
         user_name = user_clockin_doc['_id']
         user_wage = result_user_data[user_name]['wage']
         detail_clockon_list, work_hours = cal_work_hours(
@@ -71,7 +72,8 @@ def cal_work_hours(clockin_dict):
         elif status == "OFF" and Clock_On:
             end_time = date
             start_time = ClockOn_time
-            day_hours = ((end_time - start_time).seconds) // (60 * 30) / 2
+            day_hours = (end_time.timestamp() -
+                         start_time.timestamp()) // (60 * 30) / 2
             detail_clockon_list.append([start_time.strftime(
                 "%Y/%m/%d %H:%M:%S"), end_time.strftime("%Y/%m/%d %H:%M:%S"), day_hours])
             total_hours = day_hours + total_hours
@@ -95,17 +97,26 @@ def _get_user_record(values):
     else:
         endtime = datetime.today() + timedelta(days=1)
         starttime = endtime - timedelta(days=365)
-    print('start time : ', starttime)
-    print('end time : ', endtime)
-    result_user_data = DB_CONNECTOR.query_data(
-        'profile', {"account": account}, {"users": 1, "user_detail": 1})
+    #print('start time : ', starttime)
+    #print('end time : ', endtime)
+    # result_user_data = DB_CONNECTOR.query_data(
+    #     'profile', {"account": account}, {"users": 1, "user_detail": 1})
 
-    result_users = result_user_data[0]["users"]
-    result_user_detail = result_user_data[0]["user_detail"]
-    result_user_data = dict(zip(result_users, result_user_detail))
+    # result_users = result_user_data[0]["users"]
+    # result_user_detail = result_user_data[0]["user_detail"]
+    # result_user_data = dict(zip(result_users, result_user_detail))
 
-    result_record_data = DB_CONNECTOR.query_data('record', {'account': account, "date": {
-        "$gte": starttime, "$lt": endtime}, "status": {"$exists": True}, "user_object_id": {"$exists": True}}, {'_id': 0})
+    # # result_record_data = DB_CONNECTOR.query_data('record', {'account': account, "date": {
+    # #     "$gte": starttime, "$lt": endtime}, "status": {"$exists": True}, "user_object_id": {"$exists": True}}, {'_id': 0})
+
+    expression_list = []
+    expression_list.append({"$match": {"status": {"$exists": True}, "user_object_id": {
+                           "$exists": True}, "account": account, "date": {"$gte": starttime, "$lt": endtime}}})
+    expression_list.append({"$lookup": {
+                           "from": 'eigenvalue', "localField": "eigenvalue", "foreignField": "_id", "as": "eigenvalue"}})
+    expression_list.append({"$project": {
+                           "user_object_id": 1, "cropimageid": '$eigenvalue.cropimageID', 'date': '$date', 'status': '$status'}})
+    result_record_data = DB_CONNECTOR.aggregate('record', expression_list)
 
     fs = gridfs.GridFS(DB_CONNECTOR.db, 'image')
 
@@ -115,10 +126,7 @@ def _get_user_record(values):
     output = []
 
     for doc in result_record_data:
-        print(doc)
-        target_user_index = result_users.index(doc['user_object_id'])
-        raw_image = fs.get(
-            result_user_detail[target_user_index]['cropimageid']).read()
+        raw_image = fs.get(doc['cropimageid'][0]).read()
         raw_image = str(raw_image)[1:]
         out_record = {
             'user': doc['user_object_id'],
@@ -129,3 +137,30 @@ def _get_user_record(values):
         output.append(out_record)
 
     return make_result_msg(True, result=output)
+
+
+def _edit_user_record(values):
+    logging.info(values)
+    account, edit_record_dict, loss_argument = request_to_dict(
+        values, collection_schema_dict['edit_record'], is_include_account=True)
+
+    if loss_argument:
+        return make_result_msg(False, error_msg=error_code_dict[601], result=loss_argument)
+
+    origin_time = datetime.strptime(
+        edit_record_dict['origin_time'], "%Y/%m/%d %H:%M:%S")
+    edit_time = datetime.strptime(
+        edit_record_dict['edit_time'], "%Y/%m/%d %H:%M:%S")
+
+    result_record_data = DB_CONNECTOR.query_data('record', {'account': account, "date": origin_time,
+                                                            "status": edit_record_dict['status'], "user_object_id": edit_record_dict['user']}, {'_id': 1})
+    if result_record_data:
+        if result_record_data.count() != 1:
+            return make_result_msg(False, error_msg=error_code_dict[660], result=None)
+        else:
+            DB_CONNECTOR.update_data('record', {
+                '_id': result_record_data[0]['_id']}, {'date': edit_time})
+    else:
+        return make_result_msg(False, error_msg=error_code_dict[660], result=None)
+
+    return make_result_msg(True)

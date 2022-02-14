@@ -6,10 +6,12 @@ from error_code import error_code_dict
 from config import GOOGLE_OAUTH2_CLIENT_ID
 login_app = Blueprint('login', __name__)
 
+
 @login_app.route('/google_welcome_view')
 def google_welcome():
     logging.info('Call Google Welcome')
     return render_template('index.html', google_oauth2_client_id=GOOGLE_OAUTH2_CLIENT_ID)
+
 
 @login_app.route('/google_login', methods=['POST'])
 def google_login():
@@ -23,7 +25,7 @@ def google_login():
     output:
         'status' : True
     """
-    logging.info('Call Google Login') 
+    logging.info('Call Google Login')
     if request.method == 'POST':
         result_string = _google_login(request.get_json())
         return result_string
@@ -57,6 +59,7 @@ def login():
 def get_login_user():
     if request.method == 'POST':
         result_string = _get_login_user()
+        return result_string
     else:
         return make_result_msg(False, error_msg=error_code_dict[600])
 
