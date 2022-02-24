@@ -162,3 +162,5 @@ collection_schema_dict['google_account'] = ['mail', 'name', 'id']
 collection_schema_dict['edit_record'] = [
     'user', 'status', 'origin_time', 'edit_time', ]
 collection_schema_dict['manager_pin'] = ['user', 'pin']
+collection_schema_dict['manual_update_record'] = [
+    'record_object_id', 'user_object_id']

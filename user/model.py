@@ -202,8 +202,19 @@ def _check_manager_pin(values):
         if 'pin' in user_detail.keys():
             if user_detail['pin'] == manager_pin_dict['pin']:
                 return make_result_msg(True, error_msg=None, result=True)
+            else:
+                return make_result_msg(False, error_msg=error_code_dict[635], result=False)
         else:
-            return make_result_msg(False, error_msg=error_code_dict[633], result=False)
+            if manager_pin_dict['pin'] == '0000':
+                DB_CONNECTOR.update_data('profile', {'account': account}, {
+                    'user_detail': account_profile_user_detail})
+                user_detail['pin'] = '0000'
+                account_profile_user_detail[target_user_index] = user_detail
+                DB_CONNECTOR.update_data('profile', {'account': account}, {
+                    'user_detail': account_profile_user_detail})
+                return make_result_msg(True, error_msg=None, result=True)
+            else:
+                return make_result_msg(False, error_msg=error_code_dict[633], result=False)
     else:
         return make_result_msg(False, error_msg=error_code_dict[631], result=False)
 

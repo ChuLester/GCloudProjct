@@ -8,6 +8,50 @@ from error_code import error_code_dict
 from bson.objectid import ObjectId
 
 
+def _manual_update_record(values):
+    logging.info(values)
+    account, record_dict, loss_argument = request_to_dict(
+        values, collection_schema_dict['manual_update_record'], is_include_account=True)
+
+    if loss_argument:
+        return make_result_msg(False, error_msg=error_code_dict[601], result=loss_argument)
+
+    result_record = DB_CONNECTOR.query_data(
+        'record', {'_id': ObjectId(collection_schema_dict['record_object_id'])}, {'_id': 0})
+
+    if not(result_record):
+        logging.warning('Record is not exist')
+        return make_result_msg(False, error_msg=error_code_dict[660], result=False)
+
+    result_user = DB_CONNECTOR.query_data(
+        'profile', {'account': account}, {'users': 1, 'user_detail': 1})
+
+    if not(result_user):
+        logging.warning('Account was not register.')
+        return make_result_msg(False, error_msg=error_code_dict[611])
+
+    result_users = result_user[0]["users"]
+    result_user_detail = result_user[0]["user_detail"]
+    result_user_data = dict(zip(result_users, result_user_detail))
+
+    if record_dict['user_object_id'] not in result_users:
+        return make_result_msg(False, error_msg=error_code_dict[631])
+
+    result_eigenvalue = DB_CONNECTOR.query_data(
+        'eigenvalue', {'_id': result_record[0]['eigenvalue']}, {'_id': 0})
+
+    if not(result_eigenvalue):
+        return make_result_msg(False, error_msg=error_code_dict[660])
+
+    DB_CONNECTOR.update_data('record', {'_id': ObjectId(
+        collection_schema_dict['record_object_id'])}, {'userid': record_dict['user_object_id']})
+
+    DB_CONNECTOR.update_data('eigenvalue', {'_id': result_record[0]['eigenvalue']}, {
+                             'userid': record_dict['user_object_id']})
+
+    return make_result_msg(True)
+
+
 def _cal_working_hours(values):
     logging.info(values)
     account, workhour_dict, loss_argument = request_to_dict(
